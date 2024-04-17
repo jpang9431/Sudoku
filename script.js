@@ -1,0 +1,2 @@
+//Is with the index.html file, use this to center the position of the elements reltiavely to screen height and screne widht
+//Divide screen width by a number and screen height by a number to position element, element must be in abusoute position to move
