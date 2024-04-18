@@ -57,7 +57,7 @@ var userCol = 0;
 const borderStyle = "solid ";
 
 //Main function, call to start
-//Returns nothing
+//Returns nothingf
 document.addEventListener("DOMContentLoaded", function(event) {
   console.log("start");
   visualBoard();
@@ -65,13 +65,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.getElementById(lastNum).style.backgroundColor = "lightgray";
   solvedNumberBoard = createFilledBoard();
   printBoard(solvedNumberBoard);
-  for(let row=0; row<boardSize; row++){
+  /*for(let row=0; row<boardSize; row++){
     for(let col=0; col<boardSize; col++){
       if (solvedNumberBoard[row][col]!=0){
         addHint(row,col,solvedNumberBoard[row][col]);
       }
     }
-  }
+  }*/
+  numberBoard = createBoard(boardSize, 0);
   //console.log(solvedNumberBoard);
   //printBoard(solvedNumberBoard);
 });

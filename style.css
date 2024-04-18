@@ -70,3 +70,26 @@ h2{
   box-shadow: auto;
   background-color: lightgray;
 }
+.text {
+  position: relative;
+  font-size: 30px;
+  width: 85.25%;
+}
+#title {
+  position: relative;
+  left: 50%;
+}
+
+#board {
+  height: 43%;
+  width: 20%;
+  position: absolute;
+  top: 14%;
+  left: 81%;
+}
+#backButton {
+  position: absolute;
+  left: 47%;
+  height: 6%;
+  width: 8%;
+}
