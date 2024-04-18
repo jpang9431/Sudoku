@@ -63,52 +63,57 @@ document.addEventListener("DOMContentLoaded", function(event) {
   visualBoard();
   createOtherButtons();
   document.getElementById(lastNum).style.backgroundColor = "lightgray";
-  //addHint(0, 0, 1);
-  do {
-
-  } while (getNonEmptySquares() > 20);
-
-
   solvedNumberBoard = createFilledBoard();
-  numberBoard = deepCopy(solvedNumberBoard);
-  let squares = getAllSquares();
-  let hasRemoved = true;
-  while (hasRemoved) {
-    hasRemoved = false;
-    for (let i = 0; i < squares.length; i++) {
-      let square = squares[i];
-      let row = square[0];
-      let col = square[1];
-      let num = square[2];
-      if (num == 0) {
-        hasRemoved = true;
-        continue;
-      }
-      removeNumFromMap(row, col, num);
-      numberBoard[row][col] = 0;
-      if (solveBoard(0, getEmptySquareObjects(), 2, deepCopy(numberBoard), []).length == 1) {
-        hasRemoved = true;
-        squares.splice(i, 1);
-        i--;
-        //console.log(row+"|"+col);
-      } else {
-        numberBoard[row][col] = num;
-        addNumToMap(row, col, num);
+  printBoard(solvedNumberBoard);
+  for(let row=0; row<boardSize; row++){
+    for(let col=0; col<boardSize; col++){
+      if (solvedNumberBoard[row][col]!=0){
+        addHint(row,col,solvedNumberBoard[row][col]);
       }
     }
   }
-  //printBoard(numberBoard);
+  //console.log(solvedNumberBoard);
+  //printBoard(solvedNumberBoard);
+});
 
+function hintButtonAction() {
+  let squares = shuffleArray(getWrongSqures);
+  if (squares.legnth == 0) {
+    squares = shuffleArray(getEmptySquares);
+  }
+  let row = squares[0][0];
+  let col = squares[0][1];
+  addHint(row, col, solvedNumberBoard[row][col]);
+}
 
+//Call to get all the inncorrect squares
+//Returns a 2d array
+function getWrongSqures() {
+  let returnSquares = [];
   for (let row = 0; row < boardSize; row++) {
     for (let col = 0; col < boardSize; col++) {
-      if (numberBoard[row][col] != 0) {
-        addHint(row, col, numberBoard[row][col]);
+      if (numberBoard[row][col] != solvedNumberBoard[row][col]) {
+        returnSquares.push([row, col]);
       }
     }
   }
-  //printBoard(numberBoard);
-});
+  return returnSquares;
+}
+
+//Get all of the emptry squares
+//Returns list of squares [row,col] which are empty (equal 0)
+function getEmptySquares() {
+  let squares = [];
+  for (let row = 0; row < boardSize; row++) {
+    for (let col = 0; col < boardSize; col++) {
+      if (numberBoard[row][col] == 0) {
+        squares.push([row, col]);
+      }
+    }
+  }
+  return squares;
+}
+
 
 //Call to get how many non empty squares there are
 //Return an int
@@ -154,13 +159,18 @@ function createOtherButtons() {
     for (let col = 0; col < squareSize; col++) {
       numberCounter++;
       createElm("button", numberCounter, buttonWidth, buttonHeight, numberSpacing + buttonWidth * col + boardSize, buttonHeight * row, "otherButtons", numberCounter).addEventListener("click", function(event) {
-        document.getElementById(""+lastNum).style.backgroundColor = regBackgroundColor;
-        lastNum = event.sour
+        document.getElementById("" + lastNum).style.backgroundColor = regBackgroundColor;
+        let elm = event.target || event.srcElement;
+        lastNum = parseInt(elm.id);
         clickSquare(userRow, userCol, true);
       });
     }
   }
-  createElm("button", "delte", buttonWidth * 3, buttonHeight, numberSpacing + boardSize, buttonHeight * 3, "otherButtons", "X");
+  createElm("button", "delte", buttonWidth * 3, buttonHeight, numberSpacing + boardSize, buttonHeight * 3, "otherButtons", "X").addEventListener("click", function(event) {
+    clickSquare(userRow, userCol, false, true);
+    let elm = event.target || event.srcElement;
+    elm.style.background = regBackgroundColor;
+  });
   let counter = 0;
   let secondGroupHeight = buttonHeight * 4.5;
   //Undo Button
@@ -184,7 +194,7 @@ function createOtherButtons() {
   document.getElementById("saveFile").addEventListener("change", function(event) {
     const selectedFile = document.getElementById("saveFile").files[0];
     const reader = new FileReader();
-    reader.onLoad = (evt) =>{
+    reader.onLoad = (evt) => {
       console.log(evt.target.result);
     };
     reader.readAsText(selectedFile);
@@ -325,11 +335,55 @@ class Cell {
   }
 }
 
+//Call to get all the possible numbers for a specifc square in a 2d array
+//Returns an array of possible numbers
+function possibleNumsInCell(row, col, currentBoard) {
+  let nums = getAllPossibleNums();
+  for (let i = 0; i < boardSize; i++) {
+    let num1Index = nums.indexOf(currentBoard[row][i]);
+    if (num1Index != -1) {
+      nums.splice(num1Index, 1);
+    }
+    let num2Index = nums.indexOf(currentBoard[i][col]);
+    if (num2Index != -1) {
+      nums.splice(num2Index, 1);
+    }
+  }
+  let startRow = Math.floor(row / squareSize) * squareSize;
+  let startCol = Math.floor(col / squareSize) * squareSize;
+  for (let i = 0; i < squareSize; i++) {
+    for (let j = 0; j < squareSize; j++) {
+      let num3Index = nums.indexOf(currentBoard[startRow+i][startCol+j]);
+      if (num3Index!=-1){
+        nums.splice(num3Index,1);
+      }
+    }
+  }
+  return nums;
+}
+
 
 //Call to get the solutions for a puzzle
 //Returns 3d arrya of solutions
 function solveBoard(index, squares, requiredSolutions, currentBoard, solutionBoards) {
-  
+  if (index==squares.length){
+    solutionBoards.push(deepCopy(currentBoard));
+  } else if (solutionBoards.length==requiredSolutions){
+    return solutionBoards;
+  } else {
+    let row = squares[index].row;
+    let col = squares[index].col;
+    let possibleNums = possibleNumsInCell(row,col,currentBoard);
+    for(let i=0; i<possibleNums.length; i++){
+      //console.log(index);
+      currentBoard[row][col] = possibleNums[i];
+      if (solveBoard(index+1, squares, requiredSolutions, currentBoard, solutionBoards).length==requiredSolutions){
+          break;
+      }
+      currentBoard[row][col] = 0;
+    }
+  }
+  return solutionBoards;
 }
 
 //Call to set elements into solving mode
@@ -361,8 +415,9 @@ function createFilledBoard() {
   for (let i = 0; i < boardSize; i = i + squareSize) {
     fillSquare(i, i, board);
   }
-  numberBoard = board;
-  let solutions = solveBoard(0, getEmptySquareObjects(), 1, deepCopy(numberBoard), []);
+  numberBoard = deepCopy(board);
+  let solutions = solveBoard(0, getEmptySquareObjects(), 1, deepCopy(board), []);
+  //printBoard(solutions[0]);
   board = solutions[0];
   return board;
 }
@@ -377,7 +432,6 @@ function fillSquare(row, col, board) {
   for (let i = row; i < row + max; i++) {
     for (let j = col; j < col + max; j++) {
       board[i][j] = nums[index];
-      addNumToMap(i, j, nums[index]);
       index++;
     }
   }
@@ -400,16 +454,6 @@ function removeFromArray(elm, list) {
   if (index != -1) {
     list.splice(index, 1);
   }
-}
-
-
-
-
-//Call to get all the possible numbers for a specific sudoku cell
-//Return lsit of numbers which are possible for that square
-function getPossibleNums(row, col, board) {
- 
-  return nums;
 }
 
 //Call to get all the number sin the board in a square
@@ -470,27 +514,16 @@ function getEmptySquareObjects() {
   let squares = [];
   let emptySquares = getEmptySquares();
   for (let i = 0; i < emptySquares.length; i++) {
-    squares.push(new Cell(emptySquares[i][0], emptySquares[i][1], getPossibleNums(emptySquares[i][0], emptySquares[i][1])));
+    //console.log(emptySquares[i][0]+"|"+emptySquares[i][1]);
+    squares.push(new Cell(emptySquares[i][0], emptySquares[i][1], possibleNumsInCell(emptySquares[i][0], emptySquares[i][1],numberBoard)));
   }
+  
   squares.sort((a, b) => a.nums - b.nums);
   return squares;
 }
 
 
 
-//Get all of the emptry squares
-//Returns list of squares [row,col] which are empty (equal 0)
-function getEmptySquares() {
-  let squares = [];
-  for (let row = 0; row < boardSize; row++) {
-    for (let col = 0; col < boardSize; col++) {
-      if (numberBoard[row][col] == 0) {
-        squares.push([row, col]);
-      }
-    }
-  }
-  return squares;
-}
 
 //Call to make sure that each previous error square is still an error
 //Returns nothing
@@ -610,7 +643,7 @@ function clickSquare(row, col, place = false, remove = false, newAction = true) 
     //console.log(row + "|" + col);
     return;
   }
-  //console.log(getPossibleNums(row, col));
+  //console.log(possibleNumsInCell(row,col,numberBoard));
   for (let i = 0; i < boardSize; i++) {
     if (buttonBoard[userRow][i].hint) {
       buttonBoard[userRow][i].style.backgroundColor = hintBackgroundColor;
