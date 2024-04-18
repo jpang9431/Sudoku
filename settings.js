@@ -1,0 +1,1 @@
+//For now attach each value gotten from the submit file into cookies attached to the user
