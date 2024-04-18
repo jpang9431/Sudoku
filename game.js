@@ -3,8 +3,8 @@ const screenHeight = window.innerHeight;
 const screenWidth = window.innerWidth;
 
 //Stack with undo and redo button where you push or pop
-const undoStack = [];
-const redoStack = [];
+var undoStack = [];
+var redoStack = [];
 
 //List of ids to disable for each mode
 const entryModeIds = ["hint", "solve", "entryMode"];
@@ -63,18 +63,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
   visualBoard();
   createOtherButtons();
   document.getElementById(lastNum).style.backgroundColor = "lightgray";
-  solvedNumberBoard = createFilledBoard();
-  printBoard(solvedNumberBoard);
-  /*for(let row=0; row<boardSize; row++){
-    for(let col=0; col<boardSize; col++){
-      if (solvedNumberBoard[row][col]!=0){
-        addHint(row,col,solvedNumberBoard[row][col]);
-      }
-    }
-  }*/
-  numberBoard = createBoard(boardSize, 0);
-  //console.log(solvedNumberBoard);
-  //printBoard(solvedNumberBoard);
 });
 
 function hintButtonAction() {
@@ -182,8 +170,48 @@ function createOtherButtons() {
   createElm("button", "redo", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Redo"
   ).addEventListener("click", redo);
 
-  createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate");
-
+  createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate").addEventListener("click", function(event){
+    boardSize = 9;
+    for(let row=0; row<boardSize; row++){
+      for(let col=0; col<boardSize; col++){
+        buttonBoard[row][col].hint = false;
+        buttonBoard[row][col].style.color = regTextColor;
+        buttonBoard[row][col].isInErrorList  = false;
+        buttonBoard[row][col].innerHTML = "";
+        buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
+      }
+    }
+    errors = [];
+    undoStack = [];
+    redoStack = [];
+    solvedNumberBoard = createFilledBoard();
+    numberBoard = deepCopy(solvedNumberBoard);
+    let allSquares = getAllSquares();
+    let noRemove = false;
+    while(!noRemove){
+      noRemove = true;
+      for(let i=0; i<allSquares.length; i++){
+        let row = allSquares[i][0];
+        let col = allSquares[i][1];
+        numberBoard[row][col] = 0;
+        if (solveBoard(0, getEmptySquareObjects(), 2, deepCopy(numberBoard), []).length==1){
+          allSquares.splice(i,1);
+          noRemove = false;
+          i--;
+        } else {
+          numberBoard[row][col] = solvedNumberBoard[row][col];
+        }
+      }
+    }
+    for(let row=0; row<boardSize; row++){
+      for(let col=0; col<boardSize; col++){
+        if (numberBoard[row][col]!=0){
+          addHint(row,col, numberBoard[row][col]);
+        }
+      }
+    }
+  });
+  boardSize = sudokuButtonWidth * 9;
   let thirdGroupHeight = buttonHeight * 6.5;
   counter = 0;
   createElm("button", "entryMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Entry\nMode"
