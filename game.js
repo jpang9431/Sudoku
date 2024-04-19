@@ -420,7 +420,7 @@ function solveBoard(index, squares, requiredSolutions, currentBoard, solutionBoa
 
 //Call to set elements into solving mode
 //Returns nothing
-function solveMode() {
+function solveMode(hasSolution = false;) {
   for (let i = 0; i < entryModeIds.length; i++) {
     document.getElementById(entryModeIds[i]).disabled = false;
     document.getElementById(entryModeIds[i]).style.background = regBackgroundColor;
@@ -429,28 +429,30 @@ function solveMode() {
     document.getElementById(solveModeIds[i]).disabled = true;
     document.getElementById(solveModeIds[i]).style.background = disableButtonColor;
   }
-  
-  let solutions = solveBoard(0, getEmptySquareObjects, 1, deepCopy(numberBoard),[]);
-  if (solutions.length==0){
-    alert("Error the puzzle is invalid")
-  } else {
-    boardSize = 9;
-    for(let row=0; row<boardSize; row++){
-      for(let col=0; col<boardSize; col++){
-        buttonBoard[row][col].hint = false;
-        buttonBoard[row][col].style.color = regTextColor;
-        buttonBoard[row][col].isInErrorList  = false;
-        buttonBoard[row][col].innerHTML = "";
-        buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
-        if (numberBoard[row][col]!=0){
-          addHint(row,col,numberBoard[row][col]);
+  if (!hasSolution){
+    let solutions = solveBoard(0, getEmptySquareObjects, 1, deepCopy(numberBoard),[]);
+    if (solutions.length==0){
+      alert("Error the puzzle is invalid")
+    } else {
+      boardSize = 9;
+      for(let row=0; row<boardSize; row++){
+        for(let col=0; col<boardSize; col++){
+          buttonBoard[row][col].hint = false;
+          buttonBoard[row][col].style.color = regTextColor;
+          buttonBoard[row][col].isInErrorList  = false;
+          buttonBoard[row][col].innerHTML = "";
+          buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
+          if (numberBoard[row][col]!=0){
+            addHint(row,col,numberBoard[row][col]);
+          }
         }
       }
-    }
-    errors = [];
-    undoStack = [];
-    redoStack = [];
-    solvedNumberBoard = solutions[0];
+      errors = [];
+      undoStack = [];
+      redoStack = [];
+      solvedNumberBoard = solutions[0];
+  }
+  
   }
 }
 
