@@ -86,15 +86,33 @@ html,body {
 }
 
 #board {
-  height: 43%;
-  width: 20%;
+  height: 38%;
+  width: 18%;
   position: absolute;
-  top: 14%;
-  left: 81%;
+  top: 60%;
+  left: 65%;
 }
 #backButton {
   position: absolute;
   left: 47%;
   height: 6%;
   width: 8%;
+}
+
+.popup{
+  position: absolute;
+  width:10%;
+  height:10%;
+  left:45%;
+  text-align: center;
+  border-color:white;
+  border-style:solid;
+  visibility: hidden;
+}
+#board{
+  position:absolute;
+  width:15%;
+  height:30%;
+  top:0px;
+  left:85%;
 }

@@ -270,7 +270,9 @@ function createOtherButtons() {
   createElm("button", "soveMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve\nMode"
   );
   createElm("button", "hint", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Hint"
-  );
+  ).addEventListener("click", function(event){
+    
+  });
   createElm("button", "solve", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve"
   );
 
