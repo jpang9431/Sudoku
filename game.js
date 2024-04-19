@@ -23,7 +23,7 @@ var regBackgroundColor = "white";
 var hintBackgroundColor = "gray";
 var buttonTextColor = "black";
 var buttonBackColor = "white";
-
+var disableButtonColor = "gray";
 
 //Last number the user chose
 var lastNum = 1;
@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   console.log("start");
   visualBoard();
   createOtherButtons();
+  entryMode();
   document.getElementById(lastNum).style.backgroundColor = "lightgray";
 });
 
@@ -215,7 +216,7 @@ function createOtherButtons() {
   let thirdGroupHeight = buttonHeight * 6.5;
   counter = 0;
   createElm("button", "entryMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Entry\nMode"
-  );
+  ).addEventListener("click", entryMode);
   createElm("button", "open", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Open"
   ).addEventListener("click", function(event) {
     document.getElementById("saveFile").click();
@@ -267,8 +268,8 @@ function createOtherButtons() {
 
   let fourthGroupHeight = screenHeight - buttonHeight;
   counter = 0;
-  createElm("button", "soveMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve\nMode"
-  );
+  createElm("button", "solveMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve\nMode"
+  ).addEventListener("click", solveMode);
   createElm("button", "hint", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Hint"
   ).addEventListener("click", function(event){
     
@@ -422,20 +423,49 @@ function solveBoard(index, squares, requiredSolutions, currentBoard, solutionBoa
 function solveMode() {
   for (let i = 0; i < entryModeIds.length; i++) {
     document.getElementById(entryModeIds[i]).disabled = false;
+    document.getElementById(entryModeIds[i]).style.background = regBackgroundColor;
   }
   for (let i = 0; i < solveModeIds.length; i++) {
     document.getElementById(solveModeIds[i]).disabled = true;
+    document.getElementById(solveModeIds[i]).style.background = disableButtonColor;
+  }
+  
+  let solutions = solveBoard(0, getEmptySquareObjects, 1, deepCopy(numberBoard),[]);
+  if (solutions.length==0){
+    alert("Error the puzzle is invalid")
+  } else {
+    boardSize = 9;
+    for(let row=0; row<boardSize; row++){
+      for(let col=0; col<boardSize; col++){
+        buttonBoard[row][col].hint = false;
+        buttonBoard[row][col].style.color = regTextColor;
+        buttonBoard[row][col].isInErrorList  = false;
+        buttonBoard[row][col].innerHTML = "";
+        buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
+        if (numberBoard[row][col]!=0){
+          addHint(row,col,numberBoard[row][col]);
+        }
+      }
+    }
+    errors = [];
+    undoStack = [];
+    redoStack = [];
+    solvedNumberBoard = solutions[0];
   }
 }
 
 //Call to set elements into entry mode
 //Returns nothing
 function entryMode() {
+  console.log("a");
   for (let i = 0; i < entryModeIds.length; i++) {
     document.getElementById(entryModeIds[i]).disabled = true;
+    document.getElementById(entryModeIds[i]).style.background = disableButtonColor;
+    //document.getElementById(entryModeIds[i]).style.background = hintBackgroundColor;
   }
   for (let i = 0; i < solveModeIds.length; i++) {
     document.getElementById(solveModeIds[i]).disabled = false;
+    document.getElementById(solveModeIds[i]).style.background = regBackgroundColor;
   }
 }
 
