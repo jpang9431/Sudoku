@@ -66,10 +66,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.getElementById(lastNum).style.backgroundColor = "lightgray";
 });
 
+
 function hintButtonAction() {
-  let squares = shuffleArray(getWrongSqures);
+  let squares = getWrongSqures();
   if (squares.legnth == 0) {
-    squares = shuffleArray(getEmptySquares);
+    squares = getEmptySquares();
+  }
+  shuffleArray(squares);
+  if (squares.length==0){
+    return undefined;
   }
   let row = squares[0][0];
   let col = squares[0][1];
@@ -134,6 +139,24 @@ function getAllSquares() {
 }
 
 
+//Call to reset the board
+//Returns nothing
+function resetBoard(){
+  boardSize = 9;
+  for(let row=0; row<boardSize; row++){
+    for(let col=0; col<boardSize; col++){
+      buttonBoard[row][col].hint = false;
+      buttonBoard[row][col].style.color = regTextColor;
+      buttonBoard[row][col].isInErrorList  = false;
+      buttonBoard[row][col].innerHTML = "";
+      buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
+    }
+  }
+  errors = [];
+  undoStack = [];
+  redoStack = [];
+}
+
 //Call when bulding screen 
 //Retunrs nothing
 function createOtherButtons() {
@@ -172,19 +195,8 @@ function createOtherButtons() {
   ).addEventListener("click", redo);
 
   createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate").addEventListener("click", function(event){
+    resetBoard();
     boardSize = 9;
-    for(let row=0; row<boardSize; row++){
-      for(let col=0; col<boardSize; col++){
-        buttonBoard[row][col].hint = false;
-        buttonBoard[row][col].style.color = regTextColor;
-        buttonBoard[row][col].isInErrorList  = false;
-        buttonBoard[row][col].innerHTML = "";
-        buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
-      }
-    }
-    errors = [];
-    undoStack = [];
-    redoStack = [];
     solvedNumberBoard = createFilledBoard();
     numberBoard = deepCopy(solvedNumberBoard);
     let allSquares = getAllSquares();
@@ -211,12 +223,16 @@ function createOtherButtons() {
         }
       }
     }
+    solveMode(true);
   });
   boardSize = sudokuButtonWidth * 9;
   let thirdGroupHeight = buttonHeight * 6.5;
   counter = 0;
   createElm("button", "entryMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Entry\nMode"
-  ).addEventListener("click", entryMode);
+  ).addEventListener("click", function(event){
+    entryMode();
+    resetBoard();
+  });
   createElm("button", "open", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Open"
   ).addEventListener("click", function(event) {
     document.getElementById("saveFile").click();
@@ -269,13 +285,23 @@ function createOtherButtons() {
   let fourthGroupHeight = screenHeight - buttonHeight;
   counter = 0;
   createElm("button", "solveMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve\nMode"
-  ).addEventListener("click", solveMode);
+  ).addEventListener("click", function(event){
+    resetBoard();
+    solveMode(false);
+  });
   createElm("button", "hint", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Hint"
   ).addEventListener("click", function(event){
-    
+    hintButtonAction();
   });
   createElm("button", "solve", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve"
-  );
+  ).addEventListener("click", function(event){
+    boardSize = 9;
+    for(let row=0; row<boardSize; row++){
+      for(let col=0; col<boardSize; col++){
+        addHint(row,col,solvedNumberBoard[row][col]);
+      }
+    }
+  });
 
 
   /*//Redo Button
@@ -420,7 +446,8 @@ function solveBoard(index, squares, requiredSolutions, currentBoard, solutionBoa
 
 //Call to set elements into solving mode
 //Returns nothing
-function solveMode(hasSolution = false;) {
+function solveMode(hasSolution = false) {
+  console.log("b");
   for (let i = 0; i < entryModeIds.length; i++) {
     document.getElementById(entryModeIds[i]).disabled = false;
     document.getElementById(entryModeIds[i]).style.background = regBackgroundColor;
@@ -430,10 +457,11 @@ function solveMode(hasSolution = false;) {
     document.getElementById(solveModeIds[i]).style.background = disableButtonColor;
   }
   if (!hasSolution){
-    let solutions = solveBoard(0, getEmptySquareObjects, 1, deepCopy(numberBoard),[]);
+    let solutions = solveBoard(0, getEmptySquareObjects(), 1, deepCopy(numberBoard),[]);
     if (solutions.length==0){
       alert("Error the puzzle is invalid")
     } else {
+      printBoard(solutions[0]);
       boardSize = 9;
       for(let row=0; row<boardSize; row++){
         for(let col=0; col<boardSize; col++){
@@ -459,7 +487,12 @@ function solveMode(hasSolution = false;) {
 //Call to set elements into entry mode
 //Returns nothing
 function entryMode() {
-  console.log("a");
+  for(let row=0; row<boardSize; row++){
+    for(let col=0; col<boardSize; col++){
+      buttonBoard[row][col].hint = false;
+      buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
+    }
+  }
   for (let i = 0; i < entryModeIds.length; i++) {
     document.getElementById(entryModeIds[i]).disabled = true;
     document.getElementById(entryModeIds[i]).style.background = disableButtonColor;
