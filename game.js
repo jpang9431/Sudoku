@@ -13,7 +13,7 @@ const solveModeIds = ["generate", "solveMode"];
 
 
 //The colors
-var regBorderColor = "lightGray";
+var regBorderColor = "lightgrey";
 var emphBorderColor = "black";
 var squareSelectColor = "#7CB9E8";
 var colRowSelectColor = "LightBlue";
@@ -24,6 +24,7 @@ var hintBackgroundColor = "gray";
 var buttonTextColor = "black";
 var buttonBackColor = "white";
 var disableButtonColor = "gray";
+var selectButtonColor = "lightgrey";
 
 //Last number the user chose
 var lastNum = 1;
@@ -59,6 +60,13 @@ var mode = "entry";
 //Set border style
 const borderStyle = "solid ";
 
+//Pass in element to have colors set (only use for non sudoku buttons)
+//Returns nothing
+function setElmProperties(elm) {
+  elm.style.color = buttonTextColor;
+  elm.style.backgroundColor = regBackgroundColor;
+}
+
 //Main function, call to start
 //Returns nothingf
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -66,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   visualBoard();
   createOtherButtons();
   entryMode();
-  document.getElementById(lastNum).style.backgroundColor = "lightgray";
+  document.getElementById(lastNum).style.backgroundColor = selectButtonColor;
 });
 
 
@@ -76,7 +84,7 @@ function hintButtonAction() {
     squares = getEmptySquares();
   }
   shuffleArray(squares);
-  if (squares.length==0){
+  if (squares.length == 0) {
     return undefined;
   }
   let row = squares[0][0];
@@ -144,13 +152,13 @@ function getAllSquares() {
 
 //Call to reset the board
 //Returns nothing
-function resetBoard(){
+function resetBoard() {
   boardSize = 9;
-  for(let row=0; row<boardSize; row++){
-    for(let col=0; col<boardSize; col++){
+  for (let row = 0; row < boardSize; row++) {
+    for (let col = 0; col < boardSize; col++) {
       buttonBoard[row][col].hint = false;
       buttonBoard[row][col].style.color = regTextColor;
-      buttonBoard[row][col].isInErrorList  = false;
+      buttonBoard[row][col].isInErrorList = false;
       buttonBoard[row][col].innerHTML = "";
       buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
       numberBoard[row][col] = 0;
@@ -161,6 +169,8 @@ function resetBoard(){
   undoStack = [];
   redoStack = [];
 }
+
+
 
 //Call when bulding screen 
 //Retunrs nothing
@@ -176,44 +186,53 @@ function createOtherButtons() {
   for (let row = 0; row < squareSize; row++) {
     for (let col = 0; col < squareSize; col++) {
       numberCounter++;
-      createElm("button", numberCounter, buttonWidth, buttonHeight, numberSpacing + buttonWidth * col + boardSize, buttonHeight * row, "otherButtons", numberCounter).addEventListener("click", function(event) {
+      let elm = createElm("button", numberCounter, buttonWidth, buttonHeight, numberSpacing + buttonWidth * col + boardSize, buttonHeight * row, "otherButtons", numberCounter);
+      setElmProperties(elm);
+      elm.addEventListener("click", function(event) {
         document.getElementById("" + lastNum).style.backgroundColor = regBackgroundColor;
         let elm = event.target || event.srcElement;
         lastNum = parseInt(elm.id);
+
         clickSquare(userRow, userCol, true);
       });
     }
   }
+
+
   createElm("button", "delte", buttonWidth * 3, buttonHeight, numberSpacing + boardSize, buttonHeight * 3, "otherButtons", "X").addEventListener("click", function(event) {
     clickSquare(userRow, userCol, false, true);
     let elm = event.target || event.srcElement;
     elm.style.background = regBackgroundColor;
   });
+  setElmProperties(document.getElementById("delte"));
+
   let counter = 0;
   let secondGroupHeight = buttonHeight * 4.5;
   //Undo Button
   createElm("button", "undo", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Undo"
   ).addEventListener("click", undo);
+  setElmProperties(document.getElementById("undo"));
 
   //Redo Button
   createElm("button", "redo", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Redo"
   ).addEventListener("click", redo);
+  setElmProperties(document.getElementById("redo"));
 
-  createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate").addEventListener("click", function(event){
+  createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate").addEventListener("click", function(event) {
     resetBoard();
     boardSize = 9;
     solvedNumberBoard = createFilledBoard();
     numberBoard = deepCopy(solvedNumberBoard);
     let allSquares = getAllSquares();
     let noRemove = false;
-    while(!noRemove){
+    while (!noRemove) {
       noRemove = true;
-      for(let i=0; i<allSquares.length; i++){
+      for (let i = 0; i < allSquares.length; i++) {
         let row = allSquares[i][0];
         let col = allSquares[i][1];
         numberBoard[row][col] = 0;
-        if (solveBoard(0, getEmptySquareObjects(), 2, deepCopy(numberBoard), []).length==1){
-          allSquares.splice(i,1);
+        if (solveBoard(0, getEmptySquareObjects(), 2, deepCopy(numberBoard), []).length == 1) {
+          allSquares.splice(i, 1);
           noRemove = false;
           i--;
         } else {
@@ -221,27 +240,33 @@ function createOtherButtons() {
         }
       }
     }
-    for(let row=0; row<boardSize; row++){
-      for(let col=0; col<boardSize; col++){
-        if (numberBoard[row][col]!=0){
-          addHint(row,col, numberBoard[row][col]);
+    for (let row = 0; row < boardSize; row++) {
+      for (let col = 0; col < boardSize; col++) {
+        if (numberBoard[row][col] != 0) {
+          addHint(row, col, numberBoard[row][col]);
         }
       }
     }
     solveMode(true);
   });
+  setElmProperties(document.getElementById("generate"));
+
   boardSize = sudokuButtonWidth * 9;
   let thirdGroupHeight = buttonHeight * 6.5;
   counter = 0;
   createElm("button", "entryMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Entry\nMode"
-  ).addEventListener("click", function(event){
+  ).addEventListener("click", function(event) {
     entryMode();
     resetBoard();
   });
+  setElmProperties(document.getElementById("entryMode"));
+
   createElm("button", "open", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Open"
   ).addEventListener("click", function(event) {
     document.getElementById("saveFile").click();
   });
+  setElmProperties(document.getElementById("open"));
+
   document.getElementById("saveFile").addEventListener("change", function(event) {
     const selectedFile = document.getElementById("saveFile").files[0];
     const reader = new FileReader();
@@ -252,36 +277,37 @@ function createOtherButtons() {
       let text = evt.target.result;
       let seperatorRows = [];
       text = text.split("\n");
-      for(let i=0; i<text.length; i++){
+      for (let i = 0; i < text.length; i++) {
         text[i] = text[i].split(",");
-        if (text[i].length==1){
-          seperatorRows.push(i+1);
+        if (text[i].length == 1) {
+          seperatorRows.push(i + 1);
         }
       }
-      let mode = text[text.length-1][0];
-      if (mode=="solve"){
+      let mode = text[text.length - 1][0];
+      if (mode == "solve") {
         solveMode();
       } else {
         entryMode();
       }
-      for(let row=0; row<boardSize; row++){
-        for(let col=0; col<boardSize; col++){
+      for (let row = 0; row < boardSize; row++) {
+        for (let col = 0; col < boardSize; col++) {
           numberBoard[row][col] = parseInt(text[row][col]);
-          if (numberBoard[row][col]!=0){
+          if (numberBoard[row][col] != 0) {
             buttonBoard[row][col].innerHTML = numberBoard[row][col];
           }
-          if (mode=="solve"){
-            buttonBoard[row][col].hint = "true"==text[row+seperatorRows[0]][col];
-            if (buttonBoard[row][col].hint){
-              addHint(row,col,numberBoard[row][col]);
+          if (mode == "solve") {
+            buttonBoard[row][col].hint = "true" == text[row + seperatorRows[0]][col];
+            if (buttonBoard[row][col].hint) {
+              addHint(row, col, numberBoard[row][col]);
             }
           }
-          solvedNumberBoard[row][col] = parseInt(text[row+seperatorRows[1]][col]);
+          solvedNumberBoard[row][col] = parseInt(text[row + seperatorRows[1]][col]);
         }
       }
     };
     reader.readAsText(selectedFile);
   });
+
   createElm("button", "save", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Save"
   ).addEventListener("click", function(event) {
     let boardData = "";
@@ -319,27 +345,32 @@ function createOtherButtons() {
     }, 0);
   });
 
+  setElmProperties(document.getElementById("save"));
   let fourthGroupHeight = screenHeight - buttonHeight;
   counter = 0;
   createElm("button", "solveMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve\nMode"
-  ).addEventListener("click", function(event){
-    resetBoard();
+  ).addEventListener("click", function(event) {
+    //resetBoard();
     solveMode(false);
   });
+  setElmProperties(document.getElementById("solveMode"));
+
   createElm("button", "hint", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Hint"
-  ).addEventListener("click", function(event){
+  ).addEventListener("click", function(event) {
     hintButtonAction();
   });
+  setElmProperties(document.getElementById("hint"));
+
   createElm("button", "solve", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve"
-  ).addEventListener("click", function(event){
+  ).addEventListener("click", function(event) {
     boardSize = 9;
-    for(let row=0; row<boardSize; row++){
-      for(let col=0; col<boardSize; col++){
-        addHint(row,col,solvedNumberBoard[row][col]);
+    for (let row = 0; row < boardSize; row++) {
+      for (let col = 0; col < boardSize; col++) {
+        addHint(row, col, solvedNumberBoard[row][col]);
       }
     }
   });
-
+  setElmProperties(document.getElementById("solve"));
 
   /*//Redo Button
   createElm("button", "solveMode", buttonWidth, buttonHeight, (counter) * spacing + buttonWidth * (counter - 1) + boardSize, screenHeight-buttonHeight, "otherButtons", "Sove\nSolve"
@@ -411,6 +442,7 @@ function visualBoard() {
       if ((col + 1) % squareSize == 0) {
         button.style.borderRight = borderStyle + emphBorderColor;
       }
+
     }
   }
 }
@@ -448,9 +480,9 @@ function possibleNumsInCell(row, col, currentBoard) {
   let startCol = Math.floor(col / squareSize) * squareSize;
   for (let i = 0; i < squareSize; i++) {
     for (let j = 0; j < squareSize; j++) {
-      let num3Index = nums.indexOf(currentBoard[startRow+i][startCol+j]);
-      if (num3Index!=-1){
-        nums.splice(num3Index,1);
+      let num3Index = nums.indexOf(currentBoard[startRow + i][startCol + j]);
+      if (num3Index != -1) {
+        nums.splice(num3Index, 1);
       }
     }
   }
@@ -461,19 +493,19 @@ function possibleNumsInCell(row, col, currentBoard) {
 //Call to get the solutions for a puzzle
 //Returns 3d arrya of solutions
 function solveBoard(index, squares, requiredSolutions, currentBoard, solutionBoards) {
-  if (index==squares.length){
+  if (index == squares.length) {
     solutionBoards.push(deepCopy(currentBoard));
-  } else if (solutionBoards.length==requiredSolutions){
+  } else if (solutionBoards.length == requiredSolutions) {
     return solutionBoards;
   } else {
     let row = squares[index].row;
     let col = squares[index].col;
-    let possibleNums = possibleNumsInCell(row,col,currentBoard);
-    for(let i=0; i<possibleNums.length; i++){
+    let possibleNums = possibleNumsInCell(row, col, currentBoard);
+    for (let i = 0; i < possibleNums.length; i++) {
       //console.log(index);
       currentBoard[row][col] = possibleNums[i];
-      if (solveBoard(index+1, squares, requiredSolutions, currentBoard, solutionBoards).length==requiredSolutions){
-          break;
+      if (solveBoard(index + 1, squares, requiredSolutions, currentBoard, solutionBoards).length == requiredSolutions) {
+        break;
       }
       currentBoard[row][col] = 0;
     }
@@ -484,7 +516,7 @@ function solveBoard(index, squares, requiredSolutions, currentBoard, solutionBoa
 //Call to set elements into solving mode
 //Returns nothing
 function solveMode(hasSolution = false) {
-  console.log("b");
+  //console.log("b");
   mode = "solve";
   for (let i = 0; i < entryModeIds.length; i++) {
     document.getElementById(entryModeIds[i]).disabled = false;
@@ -494,22 +526,22 @@ function solveMode(hasSolution = false) {
     document.getElementById(solveModeIds[i]).disabled = true;
     document.getElementById(solveModeIds[i]).style.background = disableButtonColor;
   }
-  if (!hasSolution){
-    let solutions = solveBoard(0, getEmptySquareObjects(), 1, deepCopy(numberBoard),[]);
-    if (solutions.length==0){
+  if (!hasSolution) {
+    let solutions = solveBoard(0, getEmptySquareObjects(), 1, deepCopy(numberBoard), []);
+    if (solutions.length == 0) {
       alert("Error the puzzle is invalid")
     } else {
       printBoard(solutions[0]);
       boardSize = 9;
-      for(let row=0; row<boardSize; row++){
-        for(let col=0; col<boardSize; col++){
+      for (let row = 0; row < boardSize; row++) {
+        for (let col = 0; col < boardSize; col++) {
           buttonBoard[row][col].hint = false;
           buttonBoard[row][col].style.color = regTextColor;
-          buttonBoard[row][col].isInErrorList  = false;
+          buttonBoard[row][col].isInErrorList = false;
           buttonBoard[row][col].innerHTML = "";
           buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
-          if (numberBoard[row][col]!=0){
-            addHint(row,col,numberBoard[row][col]);
+          if (numberBoard[row][col] != 0) {
+            addHint(row, col, numberBoard[row][col]);
           }
         }
       }
@@ -517,8 +549,8 @@ function solveMode(hasSolution = false) {
       undoStack = [];
       redoStack = [];
       solvedNumberBoard = solutions[0];
-  }
-  
+    }
+
   }
 }
 
@@ -645,9 +677,9 @@ function getEmptySquareObjects() {
   let emptySquares = getEmptySquares();
   for (let i = 0; i < emptySquares.length; i++) {
     //console.log(emptySquares[i][0]+"|"+emptySquares[i][1]);
-    squares.push(new Cell(emptySquares[i][0], emptySquares[i][1], possibleNumsInCell(emptySquares[i][0], emptySquares[i][1],numberBoard)));
+    squares.push(new Cell(emptySquares[i][0], emptySquares[i][1], possibleNumsInCell(emptySquares[i][0], emptySquares[i][1], numberBoard)));
   }
-  
+
   squares.sort((a, b) => a.nums - b.nums);
   return squares;
 }
@@ -809,7 +841,7 @@ function clickSquare(row, col, place = false, remove = false, newAction = true) 
     buttonBoard[row][col].style.color = regTextColor;
     checkErrors();
   }
-  document.getElementById(lastNum).style.backgroundColor = "lightgrey";
+  document.getElementById(lastNum).style.backgroundColor = selectButtonColor;
   userRow = row;
   userCol = col;
 }
@@ -885,7 +917,7 @@ function redo() {
 }
 
 //Add create popup functions here
-function confirmPopUp(text) {
+function confirmPopUp() {
 
 }
 

@@ -92,11 +92,13 @@ html,body {
   top: 60%;
   left: 65%;
 }
+
 #backButton {
   position: absolute;
-  left: 47%;
-  height: 6%;
-  width: 8%;
+  left: 44%;
+  top: 82%;
+  height: 15%;
+  width: 18%;
 }
 
 .popup{

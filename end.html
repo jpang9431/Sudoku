@@ -4,19 +4,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>End Screen</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+  <title>Start Screen</title>
+  <link href="start.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-  <!--Thank the user for playing and have a finish title, ask the user if they want to play again, 
+<!--Thank the user for playing and have a finish title, ask the user if they want to play again, 
        Replay button link to game.html, options button link to settings.html, exit button which for now will do nothing
   -->
+    
+    <h1 id=startTitle>Game Over!</h1>
+
+    <a href = "game.html">
+        <input class=startButtons id=startPlay type = "button" value = "Replay">
+    </a>
+
+    
+    <a href = "settings.html">
+        <input class=startButtons id=startRules type = "button" value = "Settings"/>
+    </a>
+    
+    <!--Add way for tab to close when exit button is clicked-->
+    <a href = "">
+        <input class=startButtons id=startSettings type = "button" value = "Exit"/>
+     </a>
 
 
 
 
-
-  <script src="end.js"></script>
+	
+  <script src="script.js"></script>
 </body>
 
 </html>
