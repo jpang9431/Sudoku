@@ -53,6 +53,9 @@ var numHints = 0;
 var userRow = 0;
 var userCol = 0;
 
+//Tracks which mode the current game is in
+var mode = "entry";
+
 //Set border style
 const borderStyle = "solid ";
 
@@ -150,6 +153,8 @@ function resetBoard(){
       buttonBoard[row][col].isInErrorList  = false;
       buttonBoard[row][col].innerHTML = "";
       buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
+      numberBoard[row][col] = 0;
+      solvedNumberBoard[row][col] = 0;
     }
   }
   errors = [];
@@ -240,8 +245,40 @@ function createOtherButtons() {
   document.getElementById("saveFile").addEventListener("change", function(event) {
     const selectedFile = document.getElementById("saveFile").files[0];
     const reader = new FileReader();
-    reader.onLoad = (evt) => {
-      console.log(evt.target.result);
+    resetBoard();
+    boardSize = 9;
+    console.log(selectedFile);
+    reader.onload = (evt) => {
+      let text = evt.target.result;
+      let seperatorRows = [];
+      text = text.split("\n");
+      for(let i=0; i<text.length; i++){
+        text[i] = text[i].split(",");
+        if (text[i].length==1){
+          seperatorRows.push(i+1);
+        }
+      }
+      let mode = text[text.length-1][0];
+      if (mode=="solve"){
+        solveMode();
+      } else {
+        entryMode();
+      }
+      for(let row=0; row<boardSize; row++){
+        for(let col=0; col<boardSize; col++){
+          numberBoard[row][col] = parseInt(text[row][col]);
+          if (numberBoard[row][col]!=0){
+            buttonBoard[row][col].innerHTML = numberBoard[row][col];
+          }
+          if (mode=="solve"){
+            buttonBoard[row][col].hint = "true"==text[row+seperatorRows[0]][col];
+            if (buttonBoard[row][col].hint){
+              addHint(row,col,numberBoard[row][col]);
+            }
+          }
+          solvedNumberBoard[row][col] = parseInt(text[row+seperatorRows[1]][col]);
+        }
+      }
     };
     reader.readAsText(selectedFile);
   });
@@ -266,7 +303,7 @@ function createOtherButtons() {
       hintData = hintData + "\n";
       solvedBoardData = solvedBoardData + "\n";
     }
-    let allData = boardData + "\n" + hintData + "\n" + solvedBoardData;
+    let allData = boardData + "\n" + hintData + "\n" + solvedBoardData + "\n" + mode;
     let blobData = new Blob([allData], {
       type: 'text/plain'
     });
@@ -448,6 +485,7 @@ function solveBoard(index, squares, requiredSolutions, currentBoard, solutionBoa
 //Returns nothing
 function solveMode(hasSolution = false) {
   console.log("b");
+  mode = "solve";
   for (let i = 0; i < entryModeIds.length; i++) {
     document.getElementById(entryModeIds[i]).disabled = false;
     document.getElementById(entryModeIds[i]).style.background = regBackgroundColor;
@@ -487,12 +525,8 @@ function solveMode(hasSolution = false) {
 //Call to set elements into entry mode
 //Returns nothing
 function entryMode() {
-  for(let row=0; row<boardSize; row++){
-    for(let col=0; col<boardSize; col++){
-      buttonBoard[row][col].hint = false;
-      buttonBoard[row][col].style.backgroundColor = regBackgroundColor;
-    }
-  }
+  mode = "entry";
+  resetBoard();
   for (let i = 0; i < entryModeIds.length; i++) {
     document.getElementById(entryModeIds[i]).disabled = true;
     document.getElementById(entryModeIds[i]).style.background = disableButtonColor;
