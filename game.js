@@ -11,7 +11,6 @@ const entryModeIds = ["hint", "solve", "entryMode"];
 const solveModeIds = ["generate", "solveMode"];
 
 
-
 //The colors
 var regBorderColor = "lightgrey";
 var emphBorderColor = "black";
@@ -74,7 +73,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   visualBoard();
   createOtherButtons();
   entryMode();
-  document.getElementById(lastNum).style.backgroundColor = selectButtonColor;
+  document.getElementById("redo").style.backgroundColor = disableButtonColor;
+  document.getElementById("redo").disabled = true;
+  document.getElementById("undo").style.backgroundColor = disableButtonColor;
+  document.getElementById("undo").disabled = true;
+  document.getElementById(""+lastNum).style.backgroundColor = selectButtonColor;
 });
 
 
@@ -168,6 +171,10 @@ function resetBoard() {
   errors = [];
   undoStack = [];
   redoStack = [];
+  document.getElementById("redo").style.backgroundColor = disableButtonColor;
+  document.getElementById("redo").disabled = true;
+  document.getElementById("undo").style.backgroundColor = disableButtonColor;
+  document.getElementById("undo").disabled = true;
 }
 
 
@@ -527,9 +534,35 @@ function solveMode(hasSolution = false) {
     document.getElementById(solveModeIds[i]).style.background = disableButtonColor;
   }
   if (!hasSolution) {
+    if (errors.length!=0){
+      //Replace alerts with popup later
+      alert("Error the puzzle is invalid")
+      for (let i = 0; i < entryModeIds.length; i++) {
+        document.getElementById(entryModeIds[i]).disabled = true;
+        document.getElementById(entryModeIds[i]).style.background = disableButtonColor;
+      }
+      for (let i = 0; i < solveModeIds.length; i++) {
+        document.getElementById(solveModeIds[i]).disabled = false;
+        document.getElementById(solveModeIds[i]).style.background = regBackgroundColor;
+      }
+      mode = "entry";
+      return;
+      //entryMode();
+    }
     let solutions = solveBoard(0, getEmptySquareObjects(), 1, deepCopy(numberBoard), []);
     if (solutions.length == 0) {
+      //Replace alerts with popup later
       alert("Error the puzzle is invalid")
+      for (let i = 0; i < entryModeIds.length; i++) {
+        document.getElementById(entryModeIds[i]).disabled = true;
+        document.getElementById(entryModeIds[i]).style.background = disableButtonColor;
+      }
+      for (let i = 0; i < solveModeIds.length; i++) {
+        document.getElementById(solveModeIds[i]).disabled = false;
+        document.getElementById(solveModeIds[i]).style.background = regBackgroundColor;
+      }
+      mode = "entry";
+      return;
     } else {
       printBoard(solutions[0]);
       boardSize = 9;
@@ -548,6 +581,10 @@ function solveMode(hasSolution = false) {
       errors = [];
       undoStack = [];
       redoStack = [];
+      document.getElementById("redo").style.backgroundColor = disableButtonColor;
+      document.getElementById("redo").disabled = true;
+      document.getElementById("undo").style.backgroundColor = disableButtonColor;
+      document.getElementById("undo").disabled = true;
       solvedNumberBoard = solutions[0];
     }
 
@@ -882,6 +919,14 @@ function deepCopy(list) {
 function addToStack(stack, action) {
   //console.log(action);
   stack.push(action);
+  if (undoStack.length>=1){
+    document.getElementById("undo").style.backgroundColor = regBackgroundColor;
+    document.getElementById("undo").disabled = false;
+  }
+  if (redoStack.length>=1){
+    document.getElementById("redo").style.backgroundColor = regBackgroundColor;
+    document.getElementById("redo").disabled = false;
+  }
 }
 
 //Undo's the action
@@ -895,6 +940,10 @@ function undo() {
       document.getElementById(lastNum).style.backgroundColor = "white";
       lastNum = action.orgNum;
       clickSquare(action.row, action.col, true, false, false);
+    }
+    if (undoStack.length==0){
+      document.getElementById("undo").style.backgroundColor = disableButtonColor;
+      document.getElementById("undo").disabled = true;
     }
     addToStack(redoStack, action);
   }
@@ -911,6 +960,10 @@ function redo() {
       document.getElementById(lastNum).style.backgroundColor = "white";
       lastNum = action.newNum;
       clickSquare(action.row, action.col, true, false, false);
+    }
+    if (undoStack.length==0){
+      document.getElementById("redo").style.backgroundColor = disableButtonColor;
+      document.getElementById("redo").disabled = true;
     }
     addToStack(undoStack, action);
   }

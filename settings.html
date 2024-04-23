@@ -9,7 +9,8 @@
 </head>
 
 <body>
-  <h1>Settings</h1>
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color-->
+  <!-- <h1>Settings</h1>
   <p1>Background Color:</p1><br>
   <input type="button" id="redb" value="Red" />
   <input type="button" id="orangeb" value="Orange" />
@@ -25,7 +26,23 @@
   <input type="button" id="purplec" value="Purple" />
   <input type="button" id="whitec" value="White" /><br> <br> <br>
   <button id="backButton" onclick="window.location.href='index.html'">Go Back</button>
-  <script src="settings.js"></script>
+  <script src="settings.js"></script> -->
+
+    <h1>Settings</h1>
+    <!--Set value to default based on current game.js colors-->
+    <div>
+        <input type="color" id="background" name="BackgroundColor" value="#FFFFFF"/>
+        <label for="BackgroundColor">Background Color</label>
+    </div>
+     <div>
+        <input type="color" id="buttons" name="ButtonColor" value="#ffffff"/>
+       <label for="ButtonColor">Button Color</label>
+    </div>
+  <div>
+      <input type="color" id="buttons" name="RegBorderColor" value="#D3D3D3"/>
+     <label for="ButtonColor">Regular Border Color</label>
+  </div>
+  <!--Add back button and reset button-->
 </body>
 
 </html>
