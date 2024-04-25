@@ -1,0 +1,82 @@
+html,body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  background-color: black;
+  color:white;
+}
+
+.inpColor {
+  width: 10%;
+}
+
+.inpLabel{
+  left: 30%;
+}
+
+h1 {
+  left: 50%;
+  position: absolute;
+  font-size: 50px;
+}
+
+#resetButton {
+  background-color: #97aebd;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  min-height: 100px;
+  min-width: 250px;
+  font-size: 30px;
+  font-family: Monospace;
+  position: absolute;
+  left: 34%;
+  top: 82%;
+  height: 15%;
+  width: 18%;
+}
+
+#backButton {
+  position: absolute;
+  left: 54%;
+  top: 82%;
+  height: 15%;
+  width: 18%;
+  background-color: #97aebd;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  min-height: 100px;
+  min-width: 250px;
+  font-size: 30px;
+  font-family: Monospace;
+}
+
+#outerLoading{
+  width:11vh;
+  height:11vh;
+  background: conic-gradient(red, orange, yellow, lime, blue, violet);
+  z-index: 99;
+  border-radius: 50%;
+  animation-name: spin;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  position: absolute;
+  visibility: visible;
+}
+
+#innerLoading{
+  width:8vh;
+  height:8vh;
+  background-color: black;
+  z-index: 100;
+  border-radius: 50%;
+}
+
+
+@keyframes spin{
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

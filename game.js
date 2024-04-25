@@ -9,21 +9,22 @@ var redoStack = [];
 //List of ids to disable for each mode
 const entryModeIds = ["hint", "solve", "entryMode"];
 const solveModeIds = ["generate", "solveMode"];
-
+const listOfHoverActionIds = ["undo", "redo", "generate", "entryMode", "open", "save", "solveMode", "hint", "solve", "1", "2", "3", "4", "5", "6", "7", "8", "9", "delte"];
 
 //The colors
-var regBorderColor = "lightgrey";
-var emphBorderColor = "black";
-var squareSelectColor = "#7CB9E8";
-var colRowSelectColor = "LightBlue";
-var regTextColor = "black";
-var mistakeTextColor = "red";
-var regBackgroundColor = "white";
-var hintBackgroundColor = "gray";
-var buttonTextColor = "black";
-var buttonBackColor = "white";
-var disableButtonColor = "gray";
-var selectButtonColor = "lightgrey";
+var regBorderColor = localStorage.getItem("regBorderColor");
+var emphBorderColor = localStorage.getItem("emphBorderColor");
+var squareSelectColor = localStorage.getItem("squareSelectColor");
+var colRowSelectColor = localStorage.getItem("colRowSelectColor");
+var regTextColor = localStorage.getItem("regTextColor");
+var mistakeTextColor = localStorage.getItem("mistakeTextColor");
+var regBackgroundColor = localStorage.getItem("regBackgroundColor");
+var hintBackgroundColor = localStorage.getItem("hintBackgroundColor");
+var buttonTextColor = localStorage.getItem("buttonTextColor");
+var disableButtonColor = localStorage.getItem("disableButtonColor");
+var selectButtonColor = localStorage.getItem("selectButtonColor");
+var hoverButtonColor = localStorage.getItem("hoverButtonColor");
+var screenBackgroundColor = localStorage.getItem("screenBackgroundColor");
 
 //Last number the user chose
 var lastNum = 1;
@@ -66,19 +67,94 @@ function setElmProperties(elm) {
   elm.style.backgroundColor = regBackgroundColor;
 }
 
+function centerElm(elm){
+  elm.style.position = "absolute";
+  let windowHeight = window.innerHeight;
+  let windowWidth = window.innerWidth;
+  elm.style.left = windowWidth/2-elm.offsetWidth/2+"px";
+  elm.style.top = windowHeight/2-elm.offsetHeight/2+"px";
+}
+
+function centerElmInElm(elm1, elm2){
+  elm2.style.position="absolute";
+  let leftChange = elm1.offsetWidth/2-elm2.offsetWidth/2;
+  let topChange = elm1.offsetHeight/2-elm2.offsetHeight/2;
+  elm2.style.left = parseInt(elm1.style.left)+leftChange+"px";
+  elm2.style.top = parseInt(elm1.style.top)+topChange+"px";
+}
+
+document.addEventListener("mousemove", function(event){
+  
+});
+
+
 //Main function, call to start
 //Returns nothingf
 document.addEventListener("DOMContentLoaded", function(event) {
   console.log("start");
+  document.body.style.background = screenBackgroundColor;
+  
   visualBoard();
   createOtherButtons();
+  let tempElm = document.getElementById("outerLoading");
+  
+  tempElm.style.left = screenWidth-tempElm.offsetWidth+"px";
+  
+  tempElm.style.top = "0px";
+  console.log(tempElm);
+  centerElmInElm(document.getElementById("outerLoading"), document.getElementById("innerLoading"));
+  document.getElementById("innerLoading").style.backgroundColor = screenBackgroundColor;
+  //centerElm(document.getElementById("innerLoading"));
   entryMode();
   document.getElementById("redo").style.backgroundColor = disableButtonColor;
   document.getElementById("redo").disabled = true;
   document.getElementById("undo").style.backgroundColor = disableButtonColor;
   document.getElementById("undo").disabled = true;
   document.getElementById(""+lastNum).style.backgroundColor = selectButtonColor;
+  document.getElementById(""+lastNum).select = true;
+  for(let i=0; i<listOfHoverActionIds.length; i++){
+    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseenter", function(event){
+      let source = event.target;
+      if (!source.select&&!source.disabled){
+        source.style.backgroundColor = hoverButtonColor;
+        source.hover = true;
+      }
+    });
+    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseleave", function(event){
+      let source = event.target;  
+      if (source.hover){
+        source.style.backgroundColor = regBackgroundColor;
+        source.hover = false;
+      } 
+    });
+  }
 });
+
+
+function RBGStringToHex(rgb){
+  color = rgb.replace("rgb(","");
+  color = color.replace(")","");
+  color = color.split(", ");
+  if (color.length>=3){
+    color = RGBToHex(parseInt(color[0]), parseInt(color[1]), parseInt(color[2]));
+    return color;
+  } else {
+    return "";
+  }
+}
+
+function RGBToHex(r,g,b) {
+  r = r.toString(16);
+  g = g.toString(16);
+  b = b.toString(16);
+  if (r.length == 1)
+    r = "0" + r;
+  if (g.length == 1)
+    g = "0" + g;
+  if (b.length == 1)
+    b = "0" + b;
+  return "#" + r + g + b;
+}
 
 
 function hintButtonAction() {
@@ -197,9 +273,10 @@ function createOtherButtons() {
       setElmProperties(elm);
       elm.addEventListener("click", function(event) {
         document.getElementById("" + lastNum).style.backgroundColor = regBackgroundColor;
+        document.getElementById(""+lastNum).select = false;
         let elm = event.target || event.srcElement;
         lastNum = parseInt(elm.id);
-
+        elm.select = true;
         clickSquare(userRow, userCol, true);
       });
     }
@@ -226,6 +303,11 @@ function createOtherButtons() {
   setElmProperties(document.getElementById("redo"));
 
   createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate").addEventListener("click", function(event) {
+    document.getElementById("outerLoading").style.visibility = "visible";
+    console.log("a");
+
+
+    
     resetBoard();
     boardSize = 9;
     solvedNumberBoard = createFilledBoard();
@@ -255,7 +337,10 @@ function createOtherButtons() {
       }
     }
     solveMode(true);
+    console.log("b");
+    
   });
+  
   setElmProperties(document.getElementById("generate"));
 
   boardSize = sudokuButtonWidth * 9;

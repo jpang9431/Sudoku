@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Settings Screen</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link href="settings.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -28,21 +28,108 @@
   <button id="backButton" onclick="window.location.href='index.html'">Go Back</button>
   <script src="settings.js"></script> -->
 
-    <h1>Settings</h1>
-    <!--Set value to default based on current game.js colors-->
-    <div>
-        <input type="color" id="background" name="BackgroundColor" value="#FFFFFF"/>
-        <label for="BackgroundColor">Background Color</label>
-    </div>
-     <div>
-        <input type="color" id="buttons" name="ButtonColor" value="#ffffff"/>
-       <label for="ButtonColor">Button Color</label>
-    </div>
+  <h1>Settings</h1>
+  <!--Set value to default based on current game.js colors-->
+
+
+  <!--<div>
+    <input type="color" id="" name="" value=""/>
+    <label for=""></label>
+  </div>-->
+
   <div>
-      <input type="color" id="buttons" name="RegBorderColor" value="#D3D3D3"/>
-     <label for="ButtonColor">Regular Border Color</label>
+    <input class="inpColor" type="color" id="regBorderColor" name="regBorderColor" value="#D3D3D3" />
+    <label class="inpLabel" for="regBorderColor">Border 1</label>
   </div>
-  <!--Add back button and reset button-->
+
+  <div>
+    <input class="inpColor" type="color" id="emphBorderColor" name="emphBorderColor" value="#000000" />
+    <label class="inpLabel" for="emphBorderColor">Border 2</label>
+  </div>
+
+  <div>
+    <input class="inpColor" type="color" id="squareSelectColor" name="squareSelectColor" value="#7CB9E8"/>
+    <label class="inpLabel" for="squareSelectColor">Selected Square</label>
+  </div>
+
+  <div>
+    <input class="inpColor" type="color" id="colRowSelectColor" name="colRowSelectColor" value="#ADD8E6"/>
+    <label class="inpLabel" for="colRowSelectColor">Selected Col & Row</label>
+  </div>
+
+
+  <div>
+    <input class="inpColor" type="color" id="regTextColor" name="regTextColor" value="#000000"/>
+    <label class="inpLabel" for="regTextColor">Reg Num Text</label>
+  </div>
+
+
+  <div>
+    <input class="inpColor" type="color" id="mistakeTextColor" name="mistakeTextColor" value="#ff0000"/>
+    <label class="inpLabel" for="mistakeTextColor">Mistake Num Text</label>
+  </div>
+
+  <div>
+    <input class="inpColor" type="color" id="regBackgroundColor" name="regBackgroundColor" value="#FFFFFF"/>
+    <label class="inpLabel" for="regBackgroundColor">Reg Bakcground</label>
+  </div>
+
+  <div>
+    <input class="inpColor" type="color" id="hintBackgroundColor" name="hintBackgroundColor" value="#808080"/>
+    <label class="inpLabel" for="hintBackgroundColor">Hint Background</label>
+  </div>
+
+  <div>
+    <input class="inpColor" type="color" id="buttonTextColor" name="buttonTextColor" value="#000000"/>
+    <label class="inpLabel" for="buttonTextColor">Button Text</label>
+  </div>
+
+  <div>
+    <input class="inpColor" type="color" id="disableButtonColor" name="disableButtonColor" value="#808080"/>
+    <label class="inpLabel" for="disableButtonColor">Disable Button</label>
+  </div>
+
+  <div>
+    <input class="inpColor" type="color" id="selectButtonColor" name="selectButtonColor" value="#A9A9A9"/>
+    <label class="inpLabel" for="selectButtonColor">Selected Button</label>
+  </div>
+
+  <div>
+    <input class="inpColor" type="color" id="hoverButtonColor" name="hoverButtonColor" value="#d3d3d3"/>
+    <label class="inpLabel" for="hoverButtonColor">Hover Button</label>
+  </div>
+
+  <div>
+    <input class="inpColor" type="color" id="screenBackgroundColor" name="screenBackgroundColor" value="#000000"/>
+    <label class="inpLabel" for="screenBackgroundColor">Screen Background</label>
+  </div>
+
+  <a href="game.html">
+    <div id="outerLoading"></div>
+    <div id="innerLoading"></div>
+  </a>
+
+  <!--
+  <div>
+    <input type="color" id="background" name="backgroundColor" value="#FFFFFF" />
+    <label for="BackgroundColor">Background Color</label>
+  </div>
+
+  <div>
+    <input type="color" id="buttons" name="buttonColor" value="#ffffff" />
+    <label for="ButtonColor">Button Color</label>
+  </div>
+
+  <div>
+    <input type="color" id="border" name="regBorderColor" value="#D3D3D3" />
+    <label for="BorderColor">Regular Border Color</label>
+  </div>-->
+
+  <button id="backButton" onclick="window.location.href='index.html'">Go Back</button>
+  <button id="resetButton">Reset</button>
+
+
+  <script src="settings.js"></script>
 </body>
 
 </html>

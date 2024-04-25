@@ -136,3 +136,29 @@ html,body {
   border-top: 20px solid #f00;
 }
 
+#outerLoading{
+  width:11vh;
+  height:11vh;
+  background: conic-gradient(red, orange, yellow, lime, blue, violet);
+  z-index: 99;
+  border-radius: 50%;
+  animation-name: spin;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  position: absolute;
+  visibility: visible;
+}
+
+#innerLoading{
+  width:8vh;
+  height:8vh;
+  background-color: black;
+  z-index: 100;
+  border-radius: 50%;
+}
+
+@keyframes spin{
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
