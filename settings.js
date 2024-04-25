@@ -52,6 +52,9 @@ document.getElementById("resetButton").addEventListener("click", function(event)
   for(let i=0; i<colorInputs.length; i++){
     document.getElementById(colorInputs[i]).value = defaultValues[i];
     localStorage.setItem(colorInputs[i], defaultValues[i]);
+    if (colorInputs[i]=="screenBackgroundColor"){
+      document.getElementById("innerLoading").style.backgroundColor = event.target.value;
+    }
   }
 });
 
