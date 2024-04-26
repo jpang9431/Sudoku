@@ -8,15 +8,108 @@ html,body {
 }
 
 .inpColor {
-  width: 10%;
+  position: absolute;
+  width: 10vh;
+  height: 10vh;
 }
 
 .inpLabel{
-  left: 30%;
+  position: absolute;
+  height: 5%;
+  font-size: 16px;
+  font-family: Monospace;
+}
+
+#regBorderColor, #emphBorderColor, #squareSelectColor, #colRowSelectColor, #regTextColor{
+  top: 20%;
+}
+
+#label1, #label2, #label3, #label4, #label5 {
+  top: 25%
+}
+
+#mistakeTextColor, #regBackgroundColor, #hintBackgroundColor, #buttonTextColor, #disableButtonColor{
+  top: 40%;
+}
+
+#label6, #label7, #label8, #label9, #label10 {
+  top: 45%;
+}
+
+#selectButtonColor, #hoverButtonColor, #screenBackgroundColor {
+  top: 60%;
+}
+
+#label11, #label12, #label13 {
+  top: 65%;
+}
+
+#regBorderColor, #mistakeTextColor {
+  left: 8%;
+}
+
+#emphBorderColor, #regBackgroundColor {
+  left: 25.5%;
+}
+
+#squareSelectColor, #hintBackgroundColor {
+  left: 43%;
+}
+
+#colRowSelectColor, #buttonTextColor {
+  left: 60.5%;
+}
+
+#disableButtonColor, #regTextColor {
+  left: 78%
+}
+
+#selectButtonColor {
+  left: 15.5%;
+}
+
+#hoverButtonColor {
+  left: 43%;
+}
+
+#screenBackgroundColor {
+  left: 70.5%;
+}
+
+#label1, #label6 {
+  left: 13.5%;
+}
+
+#label2, #label7 {
+  left: 31%;
+}
+
+#label3, #label8 {
+  left: 48.5%;
+}
+
+#label4, #label9 {
+  left: 66%;
+}
+
+#label5, #label10{
+  left: 83.5%;
+}
+
+#label11 {
+  left: 21%;
+}
+
+#label12 {
+  left: 48.5%;
+}
+
+#label13 {
+  left: 76%;
 }
 
 h1 {
-  left: 50%;
+  left: 42.5%;
   position: absolute;
   font-size: 50px;
 }
@@ -31,7 +124,7 @@ h1 {
   font-size: 30px;
   font-family: Monospace;
   position: absolute;
-  left: 34%;
+  left: 30%;
   top: 82%;
   height: 15%;
   width: 18%;
@@ -39,7 +132,7 @@ h1 {
 
 #backButton {
   position: absolute;
-  left: 54%;
+  left: 50%;
   top: 82%;
   height: 15%;
   width: 18%;
@@ -73,6 +166,15 @@ h1 {
   background-color: black;
   z-index: 100;
   border-radius: 50%;
+}
+
+#triangle {
+  width:0;
+  height:0;
+  border-left:8vh solid transparent;
+  border-right:8vh solid transparent;
+  border-bottom:8vh solid red;
+
 }
 
 

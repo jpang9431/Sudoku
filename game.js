@@ -67,24 +67,24 @@ function setElmProperties(elm) {
   elm.style.backgroundColor = regBackgroundColor;
 }
 
-function centerElm(elm){
+function centerElm(elm) {
   elm.style.position = "absolute";
   let windowHeight = window.innerHeight;
   let windowWidth = window.innerWidth;
-  elm.style.left = windowWidth/2-elm.offsetWidth/2+"px";
-  elm.style.top = windowHeight/2-elm.offsetHeight/2+"px";
+  elm.style.left = windowWidth / 2 - elm.offsetWidth / 2 + "px";
+  elm.style.top = windowHeight / 2 - elm.offsetHeight / 2 + "px";
 }
 
-function centerElmInElm(elm1, elm2){
-  elm2.style.position="absolute";
-  let leftChange = elm1.offsetWidth/2-elm2.offsetWidth/2;
-  let topChange = elm1.offsetHeight/2-elm2.offsetHeight/2;
-  elm2.style.left = parseInt(elm1.style.left)+leftChange+"px";
-  elm2.style.top = parseInt(elm1.style.top)+topChange+"px";
+function centerElmInElm(elm1, elm2) {
+  elm2.style.position = "absolute";
+  let leftChange = elm1.offsetWidth / 2 - elm2.offsetWidth / 2;
+  let topChange = elm1.offsetHeight / 2 - elm2.offsetHeight / 2;
+  elm2.style.left = parseInt(elm1.style.left) + leftChange + "px";
+  elm2.style.top = parseInt(elm1.style.top) + topChange + "px";
 }
 
-document.addEventListener("mousemove", function(event){
-  
+document.addEventListener("mousemove", function(event) {
+
 });
 
 
@@ -93,13 +93,13 @@ document.addEventListener("mousemove", function(event){
 document.addEventListener("DOMContentLoaded", function(event) {
   console.log("start");
   document.body.style.background = screenBackgroundColor;
-  
+
   visualBoard();
   createOtherButtons();
   let tempElm = document.getElementById("outerLoading");
-  
-  tempElm.style.left = screenWidth-tempElm.offsetWidth+"px";
-  
+
+  tempElm.style.left = screenWidth - tempElm.offsetWidth + "px";
+
   tempElm.style.top = "0px";
   console.log(tempElm);
   centerElmInElm(document.getElementById("outerLoading"), document.getElementById("innerLoading"));
@@ -110,32 +110,32 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.getElementById("redo").disabled = true;
   document.getElementById("undo").style.backgroundColor = disableButtonColor;
   document.getElementById("undo").disabled = true;
-  document.getElementById(""+lastNum).style.backgroundColor = selectButtonColor;
-  document.getElementById(""+lastNum).select = true;
-  for(let i=0; i<listOfHoverActionIds.length; i++){
-    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseenter", function(event){
+  document.getElementById("" + lastNum).style.backgroundColor = selectButtonColor;
+  document.getElementById("" + lastNum).select = true;
+  for (let i = 0; i < listOfHoverActionIds.length; i++) {
+    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseenter", function(event) {
       let source = event.target;
-      if (!source.select&&!source.disabled){
+      if (!source.select && !source.disabled) {
         source.style.backgroundColor = hoverButtonColor;
         source.hover = true;
       }
     });
-    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseleave", function(event){
-      let source = event.target;  
-      if (source.hover){
+    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseleave", function(event) {
+      let source = event.target;
+      if (source.hover) {
         source.style.backgroundColor = regBackgroundColor;
         source.hover = false;
-      } 
+      }
     });
   }
 });
 
 
-function RBGStringToHex(rgb){
-  color = rgb.replace("rgb(","");
-  color = color.replace(")","");
+function RBGStringToHex(rgb) {
+  color = rgb.replace("rgb(", "");
+  color = color.replace(")", "");
   color = color.split(", ");
-  if (color.length>=3){
+  if (color.length >= 3) {
     color = RGBToHex(parseInt(color[0]), parseInt(color[1]), parseInt(color[2]));
     return color;
   } else {
@@ -143,7 +143,7 @@ function RBGStringToHex(rgb){
   }
 }
 
-function RGBToHex(r,g,b) {
+function RGBToHex(r, g, b) {
   r = r.toString(16);
   g = g.toString(16);
   b = b.toString(16);
@@ -273,7 +273,7 @@ function createOtherButtons() {
       setElmProperties(elm);
       elm.addEventListener("click", function(event) {
         document.getElementById("" + lastNum).style.backgroundColor = regBackgroundColor;
-        document.getElementById(""+lastNum).select = false;
+        document.getElementById("" + lastNum).select = false;
         let elm = event.target || event.srcElement;
         lastNum = parseInt(elm.id);
         elm.select = true;
@@ -303,44 +303,9 @@ function createOtherButtons() {
   setElmProperties(document.getElementById("redo"));
 
   createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate").addEventListener("click", function(event) {
-    document.getElementById("outerLoading").style.visibility = "visible";
-    console.log("a");
-
-
-    
-    resetBoard();
-    boardSize = 9;
-    solvedNumberBoard = createFilledBoard();
-    numberBoard = deepCopy(solvedNumberBoard);
-    let allSquares = getAllSquares();
-    let noRemove = false;
-    while (!noRemove) {
-      noRemove = true;
-      for (let i = 0; i < allSquares.length; i++) {
-        let row = allSquares[i][0];
-        let col = allSquares[i][1];
-        numberBoard[row][col] = 0;
-        if (solveBoard(0, getEmptySquareObjects(), 2, deepCopy(numberBoard), []).length == 1) {
-          allSquares.splice(i, 1);
-          noRemove = false;
-          i--;
-        } else {
-          numberBoard[row][col] = solvedNumberBoard[row][col];
-        }
-      }
-    }
-    for (let row = 0; row < boardSize; row++) {
-      for (let col = 0; col < boardSize; col++) {
-        if (numberBoard[row][col] != 0) {
-          addHint(row, col, numberBoard[row][col]);
-        }
-      }
-    }
-    solveMode(true);
-    console.log("b");
-    
+    showDialog('generatePuzzleDialog');
   });
-  
+
   setElmProperties(document.getElementById("generate"));
 
   boardSize = sudokuButtonWidth * 9;
@@ -449,24 +414,25 @@ function createOtherButtons() {
 
   createElm("button", "hint", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Hint"
   ).addEventListener("click", function(event) {
-    hintButtonAction();
+    showDialog('confirmActionDialog2');
+    //hintButtonAction();
   });
   setElmProperties(document.getElementById("hint"));
 
   createElm("button", "solve", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve"
   ).addEventListener("click", function(event) {
-    boardSize = 9;
-    for (let row = 0; row < boardSize; row++) {
-      for (let col = 0; col < boardSize; col++) {
-        addHint(row, col, solvedNumberBoard[row][col]);
-      }
-    }
+    document.getElementById('confirmDialogTitle').textContent = "Confirm Solve";
+    document.getElementById('confirmDialogMessage').textContent = "Are you sure you want to solve the puzzle now?";
+    showDialog('confirmActionDialog');
   });
   setElmProperties(document.getElementById("solve"));
 
-  /*//Redo Button
-  createElm("button", "solveMode", buttonWidth, buttonHeight, (counter) * spacing + buttonWidth * (counter - 1) + boardSize, screenHeight-buttonHeight, "otherButtons", "Sove\nSolve"
-  );*/
+  document.getElementById("hint").addEventListener("click", function() {
+    
+  });
+  document.getElementById("generate").addEventListener("click", function() {
+    
+  });
 
 }
 
@@ -619,7 +585,7 @@ function solveMode(hasSolution = false) {
     document.getElementById(solveModeIds[i]).style.background = disableButtonColor;
   }
   if (!hasSolution) {
-    if (errors.length!=0){
+    if (errors.length != 0) {
       //Replace alerts with popup later
       alert("Error the puzzle is invalid")
       for (let i = 0; i < entryModeIds.length; i++) {
@@ -944,6 +910,7 @@ function clickSquare(row, col, place = false, remove = false, newAction = true) 
     buttonBoard[row][i].style.backgroundColor = colRowSelectColor;
     buttonBoard[i][col].style.backgroundColor = colRowSelectColor;
   }
+
   buttonBoard[row][col].style.backgroundColor = squareSelectColor;
   if (place && !buttonBoard[row][col].hint) {
     if (newAction) {
@@ -1004,11 +971,11 @@ function deepCopy(list) {
 function addToStack(stack, action) {
   //console.log(action);
   stack.push(action);
-  if (undoStack.length>=1){
+  if (undoStack.length >= 1) {
     document.getElementById("undo").style.backgroundColor = regBackgroundColor;
     document.getElementById("undo").disabled = false;
   }
-  if (redoStack.length>=1){
+  if (redoStack.length >= 1) {
     document.getElementById("redo").style.backgroundColor = regBackgroundColor;
     document.getElementById("redo").disabled = false;
   }
@@ -1026,7 +993,7 @@ function undo() {
       lastNum = action.orgNum;
       clickSquare(action.row, action.col, true, false, false);
     }
-    if (undoStack.length==0){
+    if (undoStack.length == 0) {
       document.getElementById("undo").style.backgroundColor = disableButtonColor;
       document.getElementById("undo").disabled = true;
     }
@@ -1046,7 +1013,7 @@ function redo() {
       lastNum = action.newNum;
       clickSquare(action.row, action.col, true, false, false);
     }
-    if (undoStack.length==0){
+    if (undoStack.length == 0) {
       document.getElementById("redo").style.backgroundColor = disableButtonColor;
       document.getElementById("redo").disabled = true;
     }
@@ -1054,12 +1021,84 @@ function redo() {
   }
 }
 
-//Add create popup functions here
-function confirmPopUp() {
-
+function showDialog(dialogId) {
+  document.getElementById(dialogId).showModal();
 }
 
-//Returns number of hints
-function counterPopUp() {
-
+function closeConfirmDialog(result) {
+  document.getElementById("confirmActionDialog").close();
+  if (result) {
+    boardSize = 9;
+    for (let row = 0; row < boardSize; row++) {
+      for (let col = 0; col < boardSize; col++) {
+        addHint(row, col, solvedNumberBoard[row][col]);
+      }
+    }
+  }
 }
+
+function closeconfrimdialog2(result){
+  document.getElementById("confirmActionDialog2").close();
+  if (result) {
+    hintButtonAction();
+  }
+}
+function modifyNumber(delta) {
+  const display = document.getElementById("numberDisplay");
+  let number = parseInt(display.textContent);
+  number = Math.max(0, number + delta);
+  display.textContent = number.toString();
+}
+
+function closeNumberInputDialog() {
+  document.getElementById("numberInputDialog").close();
+  const number = parseInt(document.getElementById("numberDisplay").textContent);
+  console.log("Number of hints set to:", number);
+}
+
+function modifyInitialHints(delta) {
+  const display = document.getElementById("initialHints");
+  let hints = parseInt(display.textContent);
+  hints = Math.max(0, hints + delta);
+  display.textContent = hints.toString();
+}
+
+function startPuzzleGeneration() {
+  document.getElementById("generatePuzzleDialog").close();
+  const initialHints = parseInt(document.getElementById("initialHints").textContent);
+  resetBoard();
+  boardSize = 9;
+  solvedNumberBoard = createFilledBoard();
+  numberBoard = deepCopy(solvedNumberBoard);
+  let allSquares = getAllSquares();
+  let noRemove = false;
+  while (!noRemove) {
+    noRemove = true;
+    for (let i = 0; i < allSquares.length; i++) {
+      let row = allSquares[i][0];
+      let col = allSquares[i][1];
+      numberBoard[row][col] = 0;
+      if (solveBoard(0, getEmptySquareObjects(), 2, deepCopy(numberBoard), []).length == 1) {
+        allSquares.splice(i, 1);
+        noRemove = false;
+        i--;
+      } else {
+        numberBoard[row][col] = solvedNumberBoard[row][col];
+      }
+    }
+  }
+  for (let row = 0; row < boardSize; row++) {
+    for (let col = 0; col < boardSize; col++) {
+      if (numberBoard[row][col] != 0) {
+        addHint(row, col, numberBoard[row][col]);
+      }
+    }
+  }
+  solveMode(true);
+  let squares = getEmptySquares();
+  shuffleArray(squares);
+  for(let i=0; i<initialHints; i++){
+    addHint(squares[i][0], squares[i][1], solvedNumberBoard[squares[i][0]][squares[i][1]]);
+  }
+}
+// thanks for integrating it jason pang

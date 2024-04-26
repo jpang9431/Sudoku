@@ -11,21 +11,30 @@
 <body>
   <input type="file" id="saveFile" name="saveFile"/>
 
-  <div class="popup" id="confirmationPopUp">
-    <p>Hello</p>
-    <button type="button" id="cancelConfirm">Cancel</button>
-    <button type="button" id="confirm">Confirm</button>
-  </div>
-  
-  <div class="popup" id="numberPopUp">
-    <p>Other pop up filler</p>
-    <div class="arrow-up"></div>
-    <div class="arrow-down"></div>
-    <button type="button" id = "arrow-up">Up arrow</button>
-    <button type="button" id = "arrow-down">Down arrow</button>
-    <!--https://css-tricks.com/snippets/css/css-triangle/-->
-  </div>
-  <a href="settings.html">
+  <dialog id="confirmActionDialog" class="dialog">
+    <h3 id="confirmDialogTitle">Confirm Action</h3>
+    <p id="confirmDialogMessage"></p>
+    <button onclick="closeConfirmDialog(true)">Yes</button>
+    <button onclick="closeConfirmDialog(false)">No</button>
+  </dialog>
+
+  <dialog id="confirmActionDialog2" class="dialog">
+    <h3 id="confirmDialogTitle2">Confirm Action</h3>
+    <p id="confirmDialogMessage2"></p>
+    <button onclick="closeconfrimdialog2(true)">Yes</button>
+    <button onclick="closeconfrimdialog2(false)">No</button>
+  </dialog>
+
+  <dialog id="generatePuzzleDialog" class="dialog">
+    <h3>Generate Puzzle</h3>
+    <p>How many hints would you like?</p>
+    <button onclick="modifyInitialHints(-1)">-</button>
+    <span id="initialHints">0</span>
+    <button onclick="modifyInitialHints(1)">+</button>
+    <button onclick="startPuzzleGeneration()">Generate</button>
+  </dialog>
+
+  <a href="index.html">
     <div id="outerLoading"></div>
     <div id="innerLoading"></div>
   </a>
