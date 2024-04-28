@@ -29,6 +29,10 @@ document.addEventListener("DOMContentLoaded", function(event){
   tempElm.style.top = "0px";
   centerElmInElm(document.getElementById("outerLoading"), document.getElementById("innerLoading"));
   document.getElementById("innerLoading").style.backgroundColor = localStorage.getItem("screenBackgroundColor");
+  document.getElementById("vertFlex").style.top = document.getElementById("outerLoading").offsetHeight+"px";
+  document.getElementById("vertFlex").style.height = screenHeight - document.getElementById("outerLoading").offsetHeight - document.getElementById("backButton").offsetHeight-screenHeight*.03+"px";
+  console.log(document.getElementById("vertFlex"));
+  console.log(document.getElementById("backButton"));
 });
 
 function centerElm(elm){
