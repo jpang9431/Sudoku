@@ -10,36 +10,35 @@ html,body {
 h1 {
   text-align: center;
   position: relative;
-  font-size: 50px;
+  font-size: 10vh;
 }
 
 p {
   position: relative;
-  left: 8%;
+  left: 0%;
   width: 60%;
-  font-size: 20px;
+  font-size: 3vh;
   font-family: Monospace;
 }
 
 #board{
   position: absolute;
-  top: 20%;
-  left: 70%;
-  width: 40vh;
+  width: 60vh;
+  height: 60vh;
 }
 
 #backButton{
     position: absolute;
-    left: 42%;
-    top: 82%;
+    left: 45vw;
+    top: 90vh;
     height: 10%;
     background-color: #97aebd;
     border: none;
-    border-radius: 10px;
-    padding: 10px;
-    min-height: 100px;
-    min-width: 250px;
-    font-size: 30px;
+    border-radius: 3vh;
+    padding: 3vh;
+    min-height: 5vh;
+    min-width: 10vw;
+    font-size: 5vh;
     font-family: Monospace;
 }
 /*#first {

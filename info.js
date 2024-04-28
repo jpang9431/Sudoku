@@ -1,0 +1,2 @@
+document.getElementById("board").style.left = window.innerWidth-document.getElementById("board").offsetWidth+"px";
+document.getElementById("board").style.top = document.getElementById("title").offsetHeight*2+"px";
