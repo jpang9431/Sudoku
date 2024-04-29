@@ -3,7 +3,7 @@ html,body {
   width: 100%;
   margin: 0;
   overflow: hidden;
-  background-color: white;
+  background-color: black;
   color:white;
 }
 
@@ -12,51 +12,69 @@ html,body {
   height: 10vh;
 }
 
-.inpLabel{
-  position: absolute;
-  height: 5%;
-  font-size: 16px;
-  font-family: Monospace;
+.innerDiv{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
+.inpLabel{
+  height: fit-content;
+  font-size: 3vh;
+  font-family: Monospace;
+  overflow-wrap: break-word;
+  width: 10vw;
+}
 
+label{
+  height:10vh;
+}
 
 h1 {
   left: 42.5%;
   position: absolute;
-  font-size: 50px;
+  font-size: 8vh;
 }
 
 #resetButton {
   background-color: #97aebd;
   border: none;
-  border-radius: 10px;
-  padding: 10px;
-  min-height: 100px;
-  min-width: 250px;
-  font-size: 30px;
+  border-radius: 4vh;
+  padding: 4vh;
+  height: 20vh;
+  width: 20vw;
+  font-size: 5vh;
   font-family: Monospace;
-  position: absolute;
-  left: 30%;
-  top: 82%;
-  height: 15%;
-  width: 18%;
+  position: absolute;  
+  top: 80vh;
 }
 
 #backButton {
-  position: absolute;
-  left: 50%;
-  top: 82%;
-  height: 15%;
-  width: 18%;
   background-color: #97aebd;
   border: none;
-  border-radius: 10px;
-  padding: 10px;
-  min-height: 100px;
-  min-width: 250px;
-  font-size: 30px;
+  border-radius: 4vh;
+  padding: 4vh;
+  height: 20vh;
+  width: 20vw;
+  font-size: 5vh;
   font-family: Monospace;
+  position: absolute; 
+  top:80vh;
+  left:0;
+}
+
+#game{
+  background-color: #97aebd;
+  border: none;
+  border-radius: 4vh;
+  padding: 4vh;
+  height: 20vh;
+  width: 20vw;
+  font-size: 5vh;
+  font-family: Monospace;
+  position: absolute; 
+  top:80vh;
+  left:80vw;
 }
 
 #outerLoading{
@@ -95,7 +113,6 @@ h1 {
   flex-direction: column;
   justify-content: space-around;
   position: absolute;
-  background-color: green;
   width:100%;
 }
 
@@ -104,6 +121,8 @@ h1 {
   flex-direction: row;
   justify-content: space-around;
   width:100%;
+  align-items: flex-start;
+  
 }
 
 .text{
@@ -116,3 +135,5 @@ h1 {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+

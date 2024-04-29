@@ -7,7 +7,9 @@ let colorInputs = ["regBorderColor", "emphBorderColor", "squareSelectColor", "co
 let defaultValues = ["#D3D3D3", "#000000","#7CB9E8","#ADD8E6", "#000000", "#ff0000",  "#FFFFFF", "#808080", "#000000","#808080", "#A9A9A9", "#d3d3d3", "#000000"  ];
 
 document.addEventListener("DOMContentLoaded", function(event){
-  
+  document.getElementById("title").style.top = 0;
+  document.getElementById("title").style.left = screenWidth/2-document.getElementById("title").offsetWidth/2+"px";
+  centerElm(document.getElementById("resetButton"), false);
   for(let i=0; i<colorInputs.length; i++){
     if (localStorage.getItem(colorInputs[i])==null){
       localStorage.setItem(colorInputs, document.getElementById(colorInputs[i]).value);
@@ -35,12 +37,15 @@ document.addEventListener("DOMContentLoaded", function(event){
   console.log(document.getElementById("backButton"));
 });
 
-function centerElm(elm){
+function centerElm(elm, isVert=true){
   elm.style.position = "absolute";
   let windowHeight = window.innerHeight;
   let windowWidth = window.innerWidth;
   elm.style.left = windowWidth/2-elm.offsetWidth/2+"px";
-  elm.style.top = windowHeight/2-elm.offsetHeight/2+"px";
+  if (isVert){
+    elm.style.top = windowHeight/2-elm.offsetHeight/2+"px";
+  }
+  
 }
 
 function centerElmInElm(elm1, elm2){
