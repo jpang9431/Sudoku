@@ -83,28 +83,17 @@ function centerElmInElm(elm1, elm2) {
   elm2.style.top = parseInt(elm1.style.top) + topChange + "px";
 }
 
-document.addEventListener("mousemove", function(event) {
-
-});
-
-
 //Main function, call to start
-//Returns nothingf
+//Returns nothing
 document.addEventListener("DOMContentLoaded", function(event) {
-  console.log("start");
   document.body.style.background = screenBackgroundColor;
-
   visualBoard();
   createOtherButtons();
   let tempElm = document.getElementById("outerLoading");
-
   tempElm.style.left = screenWidth - tempElm.offsetWidth + "px";
-
   tempElm.style.top = "0px";
-  console.log(tempElm);
   centerElmInElm(document.getElementById("outerLoading"), document.getElementById("innerLoading"));
   document.getElementById("innerLoading").style.backgroundColor = screenBackgroundColor;
-  //centerElm(document.getElementById("innerLoading"));
   entryMode();
   document.getElementById("redo").style.backgroundColor = disableButtonColor;
   document.getElementById("redo").disabled = true;
@@ -122,39 +111,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
     });
     document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseleave", function(event) {
       let source = event.target;
-      if (source.hover) {
+      if (source.hover && !source.disabled && !source.select) {
         source.style.backgroundColor = regBackgroundColor;
         source.hover = false;
       }
     });
   }
 });
-
-
-function RBGStringToHex(rgb) {
-  color = rgb.replace("rgb(", "");
-  color = color.replace(")", "");
-  color = color.split(", ");
-  if (color.length >= 3) {
-    color = RGBToHex(parseInt(color[0]), parseInt(color[1]), parseInt(color[2]));
-    return color;
-  } else {
-    return "";
-  }
-}
-
-function RGBToHex(r, g, b) {
-  r = r.toString(16);
-  g = g.toString(16);
-  b = b.toString(16);
-  if (r.length == 1)
-    r = "0" + r;
-  if (g.length == 1)
-    g = "0" + g;
-  if (b.length == 1)
-    b = "0" + b;
-  return "#" + r + g + b;
-}
 
 
 function hintButtonAction() {
@@ -329,7 +292,6 @@ function createOtherButtons() {
     const reader = new FileReader();
     resetBoard();
     boardSize = 9;
-    console.log(selectedFile);
     reader.onload = (evt) => {
       let text = evt.target.result;
       let seperatorRows = [];
@@ -428,10 +390,10 @@ function createOtherButtons() {
   setElmProperties(document.getElementById("solve"));
 
   document.getElementById("hint").addEventListener("click", function() {
-    
+
   });
   document.getElementById("generate").addEventListener("click", function() {
-    
+
   });
 
 }
@@ -472,7 +434,6 @@ function visualBoard() {
       button.addEventListener("click", function(event) {
         let row = this.row;
         let col = this.col;
-        //console.log(row + ":" + col);
         clickSquare(row, col, false, false);
       })
       buttonBoard[row][col] = button;
@@ -488,7 +449,6 @@ function visualBoard() {
       }
       button.style.borderBottom = borderStyle + regBorderColor;
       if ((row + 1) % squareSize == 0) {
-        //console.log(row);
         button.style.borderBottom = borderStyle + emphBorderColor;
       }
 
@@ -560,7 +520,6 @@ function solveBoard(index, squares, requiredSolutions, currentBoard, solutionBoa
     let col = squares[index].col;
     let possibleNums = possibleNumsInCell(row, col, currentBoard);
     for (let i = 0; i < possibleNums.length; i++) {
-      //console.log(index);
       currentBoard[row][col] = possibleNums[i];
       if (solveBoard(index + 1, squares, requiredSolutions, currentBoard, solutionBoards).length == requiredSolutions) {
         break;
@@ -574,7 +533,6 @@ function solveBoard(index, squares, requiredSolutions, currentBoard, solutionBoa
 //Call to set elements into solving mode
 //Returns nothing
 function solveMode(hasSolution = false) {
-  //console.log("b");
   mode = "solve";
   for (let i = 0; i < entryModeIds.length; i++) {
     document.getElementById(entryModeIds[i]).disabled = false;
@@ -764,10 +722,8 @@ function getEmptySquareObjects() {
   let squares = [];
   let emptySquares = getEmptySquares();
   for (let i = 0; i < emptySquares.length; i++) {
-    //console.log(emptySquares[i][0]+"|"+emptySquares[i][1]);
     squares.push(new Cell(emptySquares[i][0], emptySquares[i][1], possibleNumsInCell(emptySquares[i][0], emptySquares[i][1], numberBoard)));
   }
-
   squares.sort((a, b) => a.nums - b.nums);
   return squares;
 }
@@ -778,8 +734,6 @@ function getEmptySquareObjects() {
 //Call to make sure that each previous error square is still an error
 //Returns nothing
 function checkErrors() {
-  // console.log("---------------");
-  // printBoard(errors);
   for (let i = 0; i < errors.length; i++) {
     let row = errors[i][0];
     let col = errors[i][1];
@@ -888,12 +842,9 @@ function createElm(type, id, width, height, left, top, className = "", text = ""
 //Call when the user interacts with a sudoku square and updates the square accordingly
 //Returns nothing
 function clickSquare(row, col, place = false, remove = false, newAction = true) {
-  //printBoard(errors);
   if (row >= boardSize || col >= boardSize || row < 0 || col < 0) {
-    //console.log(row + "|" + col);
     return;
   }
-  //console.log(possibleNumsInCell(row,col,numberBoard));
   for (let i = 0; i < boardSize; i++) {
     if (buttonBoard[userRow][i].hint) {
       buttonBoard[userRow][i].style.backgroundColor = hintBackgroundColor;
@@ -969,7 +920,6 @@ function deepCopy(list) {
 //It adds to the stack
 //Returns nothing
 function addToStack(stack, action) {
-  //console.log(action);
   stack.push(action);
   if (undoStack.length >= 1) {
     document.getElementById("undo").style.backgroundColor = regBackgroundColor;
@@ -1037,7 +987,7 @@ function closeConfirmDialog(result) {
   }
 }
 
-function closeconfrimdialog2(result){
+function closeconfrimdialog2(result) {
   document.getElementById("confirmActionDialog2").close();
   if (result) {
     hintButtonAction();
@@ -1053,7 +1003,6 @@ function modifyNumber(delta) {
 function closeNumberInputDialog() {
   document.getElementById("numberInputDialog").close();
   const number = parseInt(document.getElementById("numberDisplay").textContent);
-  console.log("Number of hints set to:", number);
 }
 
 function modifyInitialHints(delta) {
@@ -1097,8 +1046,7 @@ function startPuzzleGeneration() {
   solveMode(true);
   let squares = getEmptySquares();
   shuffleArray(squares);
-  for(let i=0; i<initialHints; i++){
+  for (let i = 0; i < initialHints; i++) {
     addHint(squares[i][0], squares[i][1], solvedNumberBoard[squares[i][0]][squares[i][1]]);
   }
 }
-// thanks for integrating it jason pang
