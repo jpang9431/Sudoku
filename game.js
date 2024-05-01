@@ -60,6 +60,8 @@ var mode = "entry";
 //Set border style
 const borderStyle = "solid ";
 
+const doPopUp = localStorage.getItem("popupConfirm") == "true";
+
 //Pass in element to have colors set (only use for non sudoku buttons)
 //Returns nothing
 function setElmProperties(elm) {
@@ -67,6 +69,8 @@ function setElmProperties(elm) {
   elm.style.backgroundColor = regBackgroundColor;
 }
 
+//Centers in element in the screen
+//Returns nothing
 function centerElm(elm) {
   elm.style.position = "absolute";
   let windowHeight = window.innerHeight;
@@ -75,12 +79,14 @@ function centerElm(elm) {
   elm.style.top = windowHeight / 2 - elm.offsetHeight / 2 + "px";
 }
 
+//Centers element within element
+//Returns nothing
 function centerElmInElm(elm1, elm2) {
   elm2.style.position = "absolute";
   let leftChange = elm1.offsetWidth / 2 - elm2.offsetWidth / 2;
   let topChange = elm1.offsetHeight / 2 - elm2.offsetHeight / 2;
-  elm2.style.left = parseInt(elm1.style.left) + leftChange + "px";
   elm2.style.top = parseInt(elm1.style.top) + topChange + "px";
+  elm2.style.left = parseInt(elm1.style.left) + leftChange + "px";
 }
 
 //Main function, call to start
@@ -90,10 +96,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   visualBoard();
   createOtherButtons();
   let tempElm = document.getElementById("outerLoading");
-  tempElm.style.left = screenWidth - tempElm.offsetWidth + "px";
+  tempElm.style.left = screenWidth-tempElm.offsetWidth+"px";
   tempElm.style.top = "0px";
   centerElmInElm(document.getElementById("outerLoading"), document.getElementById("innerLoading"));
-  document.getElementById("innerLoading").style.backgroundColor = screenBackgroundColor;
+  document.getElementById("innerLoading").style.backgroundColor = localStorage.getItem("screenBackgroundColor");
+  
   entryMode();
   document.getElementById("redo").style.backgroundColor = disableButtonColor;
   document.getElementById("redo").disabled = true;
@@ -102,6 +109,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.getElementById("" + lastNum).style.backgroundColor = selectButtonColor;
   document.getElementById("" + lastNum).select = true;
   for (let i = 0; i < listOfHoverActionIds.length; i++) {
+    //If mouse hover over valid hover element change to hover color
+    //Returns nothing
     document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseenter", function(event) {
       let source = event.target;
       if (!source.select && !source.disabled) {
@@ -109,6 +118,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
         source.hover = true;
       }
     });
+    //If moust leave hovered element changed to regualr background color
+    //Returns nothing
     document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseleave", function(event) {
       let source = event.target;
       if (source.hover && !source.disabled && !source.select) {
@@ -119,10 +130,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   }
 });
 
-
+//Adds a hint to the screen and board
+//Returns nothing
 function hintButtonAction() {
   let squares = getWrongSqures();
-  if (squares.legnth == 0) {
+  if (squares.length == 0) {
     squares = getEmptySquares();
   }
   shuffleArray(squares);
@@ -131,6 +143,9 @@ function hintButtonAction() {
   }
   let row = squares[0][0];
   let col = squares[0][1];
+  document.getElementById(lastNum).style.backgroundColor = "white";
+  lastNum = solvedNumberBoard[row][col];
+  clickSquare(row, col, true);
   addHint(row, col, solvedNumberBoard[row][col]);
 }
 
@@ -140,7 +155,7 @@ function getWrongSqures() {
   let returnSquares = [];
   for (let row = 0; row < boardSize; row++) {
     for (let col = 0; col < boardSize; col++) {
-      if (numberBoard[row][col] != solvedNumberBoard[row][col]) {
+      if (numberBoard[row][col] != solvedNumberBoard[row][col] && numberBoard[row][col] != 0) {
         returnSquares.push([row, col]);
       }
     }
@@ -234,6 +249,8 @@ function createOtherButtons() {
       numberCounter++;
       let elm = createElm("button", numberCounter, buttonWidth, buttonHeight, numberSpacing + buttonWidth * col + boardSize, buttonHeight * row, "otherButtons", numberCounter);
       setElmProperties(elm);
+      //If click a number button siwtch last number selected and add number to current square
+      //Returns nothing
       elm.addEventListener("click", function(event) {
         document.getElementById("" + lastNum).style.backgroundColor = regBackgroundColor;
         document.getElementById("" + lastNum).select = false;
@@ -245,7 +262,8 @@ function createOtherButtons() {
     }
   }
 
-
+  //Removes number from current square same as backspace action
+  //Returns nothing
   createElm("button", "delte", buttonWidth * 3, buttonHeight, numberSpacing + boardSize, buttonHeight * 3, "otherButtons", "X").addEventListener("click", function(event) {
     clickSquare(userRow, userCol, false, true);
     let elm = event.target || event.srcElement;
@@ -265,6 +283,8 @@ function createOtherButtons() {
   ).addEventListener("click", redo);
   setElmProperties(document.getElementById("redo"));
 
+  //Click to show conformation dialog
+  //Returns nothing
   createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate").addEventListener("click", function(event) {
     showDialog('generatePuzzleDialog');
   });
@@ -274,6 +294,8 @@ function createOtherButtons() {
   boardSize = sudokuButtonWidth * 9;
   let thirdGroupHeight = buttonHeight * 6.5;
   counter = 0;
+  //Click to switch to entry mode and rest the board
+  //Retuns nothin
   createElm("button", "entryMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Entry\nMode"
   ).addEventListener("click", function(event) {
     entryMode();
@@ -281,12 +303,16 @@ function createOtherButtons() {
   });
   setElmProperties(document.getElementById("entryMode"));
 
+  //Click to download a txt save file
+  //Returns nothing
   createElm("button", "open", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Open"
   ).addEventListener("click", function(event) {
     document.getElementById("saveFile").click();
   });
   setElmProperties(document.getElementById("open"));
 
+  //Click to upload a save file and set the specific data on thes creen based on file
+  //Returns nothing
   document.getElementById("saveFile").addEventListener("change", function(event) {
     const selectedFile = document.getElementById("saveFile").files[0];
     const reader = new FileReader();
@@ -327,6 +353,8 @@ function createOtherButtons() {
     reader.readAsText(selectedFile);
   });
 
+  //Click to download a save file with the data
+  //Returns nothing
   createElm("button", "save", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Save"
   ).addEventListener("click", function(event) {
     let boardData = "";
@@ -358,6 +386,8 @@ function createOtherButtons() {
     tempElm.download = "save";
     document.body.appendChild(tempElm);
     tempElm.click();
+    //Trigger to remove the dowload link
+    //Returns nothing
     setTimeout(function() {
       document.body.removeChild(tempElm);
       window.URL.revokeObjectURL(url);
@@ -367,6 +397,8 @@ function createOtherButtons() {
   setElmProperties(document.getElementById("save"));
   let fourthGroupHeight = screenHeight - buttonHeight;
   counter = 0;
+  //Click to switch to solve mode and generate solutionto  use inputted data
+  //Retunrs nothing
   createElm("button", "solveMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve\nMode"
   ).addEventListener("click", function(event) {
     //resetBoard();
@@ -374,31 +406,40 @@ function createOtherButtons() {
   });
   setElmProperties(document.getElementById("solveMode"));
 
+  //Click to show conformation for hint
+  //Returns nothing
   createElm("button", "hint", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Hint"
   ).addEventListener("click", function(event) {
-    showDialog('confirmActionDialog2');
-    //hintButtonAction();
+    if (doPopUp) {
+      showDialog('confirmActionDialog2');
+    } else {
+      hintButtonAction();
+    }
   });
   setElmProperties(document.getElementById("hint"));
 
+  //CLick to show the confromation idalong on wether on not to get solution
+  //What do you know, returns nothing
   createElm("button", "solve", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve"
   ).addEventListener("click", function(event) {
     document.getElementById('confirmDialogTitle').textContent = "Confirm Solve";
     document.getElementById('confirmDialogMessage').textContent = "Are you sure you want to solve the puzzle now?";
-    showDialog('confirmActionDialog');
+    if (doPopUp) {
+      showDialog('confirmActionDialog');
+    } else {
+      boardSize = 9;
+      for (let row = 0; row < boardSize; row++) {
+        for (let col = 0; col < boardSize; col++) {
+          addHint(row, col, solvedNumberBoard[row][col]);
+        }
+      }
+    }
   });
   setElmProperties(document.getElementById("solve"));
-
-  document.getElementById("hint").addEventListener("click", function() {
-
-  });
-  document.getElementById("generate").addEventListener("click", function() {
-
-  });
-
 }
 
-//Triggers when user inputs a number or uses keyboard input
+//Triggers when user inputs a number or uses keyboard input user interact with board
+//Returnst nothing
 document.addEventListener("keydown", function(event) {
   let key = event.key;
   if (key == "ArrowUp" || key == "w") {
@@ -463,12 +504,6 @@ function visualBoard() {
 
     }
   }
-}
-
-//Call to setup the puzzle for the user
-//Returns nothing
-function generateShowPuzzle() {
-
 }
 
 //Object which represents one specific cell, use for backtracking
@@ -545,18 +580,9 @@ function solveMode(hasSolution = false) {
   if (!hasSolution) {
     if (errors.length != 0) {
       //Replace alerts with popup later
-      alert("Error the puzzle is invalid")
-      for (let i = 0; i < entryModeIds.length; i++) {
-        document.getElementById(entryModeIds[i]).disabled = true;
-        document.getElementById(entryModeIds[i]).style.background = disableButtonColor;
-      }
-      for (let i = 0; i < solveModeIds.length; i++) {
-        document.getElementById(solveModeIds[i]).disabled = false;
-        document.getElementById(solveModeIds[i]).style.background = regBackgroundColor;
-      }
-      mode = "entry";
-      return;
+      showDialog("confirmActionDialog3");
       //entryMode();
+      return;
     }
     let solutions = solveBoard(0, getEmptySquareObjects(), 1, deepCopy(numberBoard), []);
     if (solutions.length == 0) {
@@ -971,10 +997,14 @@ function redo() {
   }
 }
 
+//Shows the specific element
+//Returns nothing
 function showDialog(dialogId) {
   document.getElementById(dialogId).showModal();
 }
 
+//Closes a confirm dialog
+//Returns nothing
 function closeConfirmDialog(result) {
   document.getElementById("confirmActionDialog").close();
   if (result) {
@@ -987,12 +1017,30 @@ function closeConfirmDialog(result) {
   }
 }
 
+//Closes a confirm dialog
+//Returns nothing
 function closeconfrimdialog2(result) {
   document.getElementById("confirmActionDialog2").close();
   if (result) {
     hintButtonAction();
   }
 }
+
+
+function closeconfrimdialog3() {
+  document.getElementById("confirmActionDialog3").close();
+  for (let i = 0; i < entryModeIds.length; i++) {
+    document.getElementById(entryModeIds[i]).disabled = true;
+    document.getElementById(entryModeIds[i]).style.background = disableButtonColor;
+  }
+  for (let i = 0; i < solveModeIds.length; i++) {
+    document.getElementById(solveModeIds[i]).disabled = false;
+    document.getElementById(solveModeIds[i]).style.background = regBackgroundColor;
+  }
+  mode = "entry";
+}
+///Change hint number selector
+//Returns nothing
 function modifyNumber(delta) {
   const display = document.getElementById("numberDisplay");
   let number = parseInt(display.textContent);
@@ -1000,11 +1048,15 @@ function modifyNumber(delta) {
   display.textContent = number.toString();
 }
 
+//Close hint number dialog and trigger the vent
+//Reutns nothing
 function closeNumberInputDialog() {
   document.getElementById("numberInputDialog").close();
   const number = parseInt(document.getElementById("numberDisplay").textContent);
 }
 
+//Modifys inital number of hints
+//Yeah this also returns nothing
 function modifyInitialHints(delta) {
   const display = document.getElementById("initialHints");
   let hints = parseInt(display.textContent);
@@ -1012,6 +1064,8 @@ function modifyInitialHints(delta) {
   display.textContent = hints.toString();
 }
 
+//Gnerates puzzle
+//Retuns noting
 function startPuzzleGeneration() {
   document.getElementById("generatePuzzleDialog").close();
   const initialHints = parseInt(document.getElementById("initialHints").textContent);

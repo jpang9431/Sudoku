@@ -15,16 +15,15 @@ h1 {
 
 p {
   position: relative;
-  left: 0%;
-  width: 60%;
-  font-size: 3vh;
+  left: 5%;
+  width: 50%;
+  font-size: 2.5vh;
   font-family: Monospace;
 }
 
 #board{
   position: absolute;
-  width: 60vh;
-  height: 60vh;
+  width: 35%;
 }
 
 #backButton{

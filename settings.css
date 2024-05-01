@@ -7,6 +7,9 @@ html,body {
   color:white;
 }
 
+
+
+
 .inpColor {
   width: 10vh;
   height: 10vh;
@@ -20,7 +23,8 @@ html,body {
 
 .inpLabel{
   height: fit-content;
-  font-size: 3vh;
+  font-size: 2.5vh;
+  padding: 2vh;
   font-family: Monospace;
   overflow-wrap: break-word;
   width: 10vw;
@@ -31,8 +35,8 @@ label{
 }
 
 h1 {
-  left: 42.5%;
-  position: absolute;
+  text-align: center;
+  position: relative;
   font-size: 8vh;
 }
 
@@ -45,8 +49,9 @@ h1 {
   width: 20vw;
   font-size: 5vh;
   font-family: Monospace;
-  position: absolute;  
+  position: relative;  
   top: 80vh;
+  left: 45%;
 }
 
 #backButton {
@@ -59,8 +64,8 @@ h1 {
   font-size: 5vh;
   font-family: Monospace;
   position: absolute; 
-  top:80vh;
-  left:0;
+  top: 80vh;
+  left:5vh;
 }
 
 #game{
@@ -74,7 +79,7 @@ h1 {
   font-family: Monospace;
   position: absolute; 
   top:80vh;
-  left:80vw;
+  left:75vw;
 }
 
 #outerLoading{

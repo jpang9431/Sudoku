@@ -21,11 +21,17 @@ document.addEventListener("DOMContentLoaded", function(event){
       if (colorInputs[i]=="screenBackgroundColor"){
         document.getElementById("innerLoading").style.backgroundColor = event.target.value;
       }
-      /*console.log(event.target.value);
-      console.log(event.target.id);
-      console.log(event.target.getAttribute("name"));*/
     });
   }
+  let checkedProp = localStorage.getItem("popupConfirm")=="true";
+  if (checkedProp==null){
+    localStorage.setItem("popupConfirm", true);
+    checkedProp = true;
+  }
+  document.getElementById("popupConfirm").checked = checkedProp;
+  document.getElementById("popupConfirm").addEventListener("change", function(event){
+    localStorage.setItem("popupConfirm",   document.getElementById("popupConfirm").checked);
+  });
   let tempElm = document.getElementById("outerLoading");
   tempElm.style.left = screenWidth-tempElm.offsetWidth+"px";
   tempElm.style.top = "0px";
@@ -33,8 +39,6 @@ document.addEventListener("DOMContentLoaded", function(event){
   document.getElementById("innerLoading").style.backgroundColor = localStorage.getItem("screenBackgroundColor");
   document.getElementById("vertFlex").style.top = document.getElementById("outerLoading").offsetHeight+"px";
   document.getElementById("vertFlex").style.height = screenHeight - document.getElementById("outerLoading").offsetHeight - document.getElementById("backButton").offsetHeight-screenHeight*.03+"px";
-  console.log(document.getElementById("vertFlex"));
-  console.log(document.getElementById("backButton"));
 });
 
 function centerElm(elm, isVert=true){
@@ -65,5 +69,6 @@ document.getElementById("resetButton").addEventListener("click", function(event)
       document.getElementById("innerLoading").style.backgroundColor = event.target.value;
     }
   }
+  document.getElementById("popupConfirm").checked = true;
 });
 
