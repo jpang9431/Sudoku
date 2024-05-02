@@ -6,6 +6,7 @@ let colorInputs = ["regBorderColor", "emphBorderColor", "squareSelectColor", "co
 
 let defaultValues = ["#D3D3D3", "#000000","#7CB9E8","#ADD8E6", "#000000", "#ff0000",  "#FFFFFF", "#808080", "#000000","#808080", "#A9A9A9", "#d3d3d3", "#000000"  ];
 
+
 document.addEventListener("DOMContentLoaded", function(event){
   document.getElementById("title").style.top = 0;
   document.getElementById("title").style.left = screenWidth/2-document.getElementById("title").offsetWidth/2+"px";

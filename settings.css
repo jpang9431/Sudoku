@@ -7,9 +7,6 @@ html,body {
   color:white;
 }
 
-
-
-
 .inpColor {
   width: 10vh;
   height: 10vh;
@@ -51,7 +48,7 @@ h1 {
   font-family: Monospace;
   position: relative;  
   top: 80vh;
-  left: 45%;
+  left: 70vh;
 }
 
 #backButton {
@@ -85,7 +82,7 @@ h1 {
 #outerLoading{
   width:11vh;
   height:11vh;
-  background: conic-gradient(red, orange, yellow, lime, blue, violet);
+  background: conic-gradient(red, orange, yellow, lime, blue, violet, red);
   z-index: 99;
   border-radius: 50%;
   animation-name: spin;
