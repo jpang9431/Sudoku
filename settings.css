@@ -7,6 +7,16 @@ html,body {
   color:white;
 }
 
+#canvas:hover{
+  cursor: none;
+  z-index: -1;
+  position:absolute;
+  top:0;
+  left:0;
+  height:100%;
+  width:100%;
+}
+
 .inpColor {
   width: 10vh;
   height: 10vh;
@@ -35,6 +45,9 @@ h1 {
   text-align: center;
   position: relative;
   font-size: 8vh;
+  width: fit-content;
+   pointer-events: none;
+  visibility: hidden;
 }
 
 #resetButton {
@@ -124,7 +137,7 @@ h1 {
   justify-content: space-around;
   width:100%;
   align-items: flex-start;
-  
+
 }
 
 .text{
