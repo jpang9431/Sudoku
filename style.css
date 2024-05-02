@@ -159,7 +159,7 @@ h3 {
 #outerLoading {
   width: 11vh;
   height: 11vh;
-  background: conic-gradient(red, orange, yellow, lime, blue, violet);
+  background: conic-gradient(red, orange, yellow, lime, blue, violet, red);
   z-index: 99;
   border-radius: 50%;
   animation-name: spin;

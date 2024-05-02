@@ -96,11 +96,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   visualBoard();
   createOtherButtons();
   let tempElm = document.getElementById("outerLoading");
-  tempElm.style.left = screenWidth-tempElm.offsetWidth+"px";
+  tempElm.style.left = screenWidth - tempElm.offsetWidth + "px";
   tempElm.style.top = "0px";
   centerElmInElm(document.getElementById("outerLoading"), document.getElementById("innerLoading"));
   document.getElementById("innerLoading").style.backgroundColor = localStorage.getItem("screenBackgroundColor");
-  
+
   entryMode();
   document.getElementById("redo").style.backgroundColor = disableButtonColor;
   document.getElementById("redo").disabled = true;
@@ -1067,6 +1067,7 @@ function modifyInitialHints(delta) {
 //Gnerates puzzle
 //Retuns noting
 function startPuzzleGeneration() {
+  document.getElementById("textLabel").innerHTML = "Starting Puzzle Generation";
   document.getElementById("generatePuzzleDialog").close();
   const initialHints = parseInt(document.getElementById("initialHints").textContent);
   resetBoard();

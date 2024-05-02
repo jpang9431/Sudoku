@@ -10,13 +10,13 @@ body {
     position: absolute;
     top: 75%;
     background-color: #97aebd;
-    border: none;
-    border-radius: 10px;
-    padding: 10px;
-    min-height: 100px;
-    min-width: 250px;
-    font-size: 30px;
-    font-family: Monospace;
+      border: none;
+      border-radius: 4vh;
+      padding: 4vh;
+      height: 20vh;
+      width: 20vw;
+      font-size: 5vh;
+      font-family: Monospace;
 }
 .startButtons:hover {
     background-color: #6d7e8c;
@@ -31,7 +31,7 @@ body {
     right: 0;
     text-align: center;
     top: 10%;
-    font-size: 140px
+    font-size: 10vw
 }
 #startPlay {
     left: 5%;
@@ -44,4 +44,66 @@ body {
 }
 #startSettings {
     right: 5%;
+}
+
+.intro {
+    position: absolute;
+    top: 200%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    transition: 1s;
+    z-index: 2;
+    animation-name: divIntro;
+    animation-duration: 6s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+}
+
+.logo-header {
+    background-color: #ffffff;
+}
+
+.su {
+    position: absolute;
+    color: #ffffff;
+    top: 120%;
+    left: 44.4%;
+    font-size: 5vw;
+    animation-name: suIntro;
+    animation-duration: 4s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+    opacity: 0;
+}
+.doku {
+    position: absolute;
+    color: #ffffff;
+    top: 120%;
+    left: 50%;
+    font-size: 5vw;
+    animation-name: dokuIntro;
+    animation-duration: 4.5s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+    opacity: 0;
+}
+
+@keyframes suIntro {
+    0% {top: 120%; opacity: 0}
+    35% {top: 45%; opacity: 1}
+    50% {top: 45%; opacity: 1}
+    100% {top: -20%; opacity: 0}
+}
+@keyframes dokuIntro {
+    11% {top: 120%; opacity: 0}
+    40% {top: 45%; opacity: 1}
+    55% {top: 45%; opacity: 1}
+    100% {top: -20%; opacity: 0}
+}
+@keyframes divIntro {
+    0% {top: 0%}
+    60% {top: 0%}
+    100% {top: -200%}
 }
