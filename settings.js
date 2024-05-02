@@ -79,7 +79,6 @@ function getRandomArbitrary(min, max) {
 }
 
 
-
 document.addEventListener("DOMContentLoaded", function(event){
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
@@ -125,7 +124,7 @@ function centerElm(elm, isVert=true){
   if (isVert){
     elm.style.top = windowHeight/2-elm.offsetHeight/2+"px";
   }
-  
+
 }
 
 function centerElmInElm(elm1, elm2){
