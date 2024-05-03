@@ -11,6 +11,7 @@ const entryModeIds = ["hint", "solve", "entryMode"];
 const solveModeIds = ["generate", "solveMode"];
 const listOfHoverActionIds = ["undo", "redo", "generate", "entryMode", "open", "save", "solveMode", "hint", "solve", "1", "2", "3", "4", "5", "6", "7", "8", "9", "delte"];
 
+
 //The colors
 var regBorderColor = localStorage.getItem("regBorderColor");
 var emphBorderColor = localStorage.getItem("emphBorderColor");
@@ -57,10 +58,28 @@ var userCol = 0;
 //Tracks which mode the current game is in
 var mode = "entry";
 
+//Track wether or not in hint mode
+var hint = false;
+
+//Tracks which notes are on
+var noteMap = new Map();
+
+
+
 //Set border style
 const borderStyle = "solid ";
 
 const doPopUp = localStorage.getItem("popupConfirm") == "true";
+
+
+function getNoteMap(){
+  let map = new Map();
+  for(let i=0; i<boardSize; i++){
+    for(let j=0; j<boardSize; j++){
+      map.set(""+i+j,new Array(boardSize));
+    }
+  }
+}
 
 //Pass in element to have colors set (only use for non sudoku buttons)
 //Returns nothing
@@ -100,7 +119,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
   tempElm.style.top = "0px";
   centerElmInElm(document.getElementById("outerLoading"), document.getElementById("innerLoading"));
   document.getElementById("innerLoading").style.backgroundColor = localStorage.getItem("screenBackgroundColor");
-
+  
+  //console.log(document.getElementById("000"));
   entryMode();
   document.getElementById("redo").style.backgroundColor = disableButtonColor;
   document.getElementById("redo").disabled = true;
@@ -108,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.getElementById("undo").disabled = true;
   document.getElementById("" + lastNum).style.backgroundColor = selectButtonColor;
   document.getElementById("" + lastNum).select = true;
+  document.getElementById("regMode").click();
   for (let i = 0; i < listOfHoverActionIds.length; i++) {
     //If mouse hover over valid hover element change to hover color
     //Returns nothing
@@ -270,9 +291,25 @@ function createOtherButtons() {
     elm.style.background = regBackgroundColor;
   });
   setElmProperties(document.getElementById("delte"));
+  createElm("button", "regMode", buttonWidth*3/2, buttonHeight, numberSpacing + boardSize, buttonHeight * 3+buttonHeight, "otherButtons", "Edit").addEventListener("click", function(event){
+    hint = false;
+    document.getElementById("regMode").disabled = true;
+    document.getElementById("regMode").style.backgroundColor = disableButtonColor;
+    document.getElementById("noteMode").disabled = false;
+    document.getElementById("noteMode").style.backgroundColor = regBackgroundColor;
+  });
+  createElm("button", "noteMode", buttonWidth*3/2, buttonHeight, numberSpacing + boardSize + buttonWidth*3/2, buttonHeight * 3+buttonHeight, "otherButtons", "Note").addEventListener("click", function(event){
+    hint = true;
+    document.getElementById("regMode").disabled = false;
+    document.getElementById("regMode").style.backgroundColor = regBackgroundColor;
+    document.getElementById("noteMode").disabled = true;
+    document.getElementById("noteMode").style.backgroundColor = disableButtonColor;
+  });
 
+  
+  
   let counter = 0;
-  let secondGroupHeight = buttonHeight * 4.5;
+  let secondGroupHeight = buttonHeight * 5.5;
   //Undo Button
   createElm("button", "undo", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Undo"
   ).addEventListener("click", undo);
@@ -292,7 +329,7 @@ function createOtherButtons() {
   setElmProperties(document.getElementById("generate"));
 
   boardSize = sudokuButtonWidth * 9;
-  let thirdGroupHeight = buttonHeight * 6.5;
+  let thirdGroupHeight = buttonHeight * 6.75;
   counter = 0;
   //Click to switch to entry mode and rest the board
   //Retuns nothin
@@ -456,6 +493,12 @@ document.addEventListener("keydown", function(event) {
     undo();
   } else if (key == "y" && event.ctrlKey) {
     redo();
+  } else if (key=="Shift"){
+    if (hint){
+      document.getElementById("regMode").click();
+    } else if (!hint){
+      document.getElementById("noteMode").click();
+    }
   } else {
     let num = parseInt(key);
     if (num != NaN && num > 0) {
@@ -472,6 +515,23 @@ function visualBoard() {
   for (let row = 0; row < boardSize; row++) {
     for (let col = 0; col < boardSize; col++) {
       let button = createElm("button", "square" + row + col, screenHeight / boardSize, screenHeight / boardSize, screenHeight / boardSize * col, screenHeight / boardSize * row, "sudoku");
+      let tempButtonSize = screenHeight / boardSize;
+      let buttonX = screenHeight / boardSize * col;
+      let buttonY = screenHeight / boardSize * row;
+      let counter = 0;
+      for (let textRow = 0; textRow<Math.sqrt(boardSize); textRow++){
+        for(let textCol=0; textCol<Math.sqrt(boardSize); textCol++){
+          counter++;
+          let noteTextSize = screenHeight/boardSize;
+          noteTextSize = noteTextSize/3;
+          let tempElm = createElm("p", ""+row+col+counter, noteTextSize, noteTextSize, buttonX+noteTextSize*textCol, buttonY+noteTextSize*textRow, "sudokuText",counter);
+          tempElm.style.color = regTextColor;
+          tempElm.addEventListener(function(event){
+            let sourceId = event.target.id;
+            let squareRowCol = 
+          });
+        }
+      }
       button.addEventListener("click", function(event) {
         let row = this.row;
         let col = this.col;

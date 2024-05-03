@@ -12,6 +12,19 @@ h3 {
   text-align: center;
 }
 
+.sudokuText{
+  font-size: 2vh;
+  text-align: center;
+  color:black;
+  position: absolute;
+  left:0px;
+  top:0px;
+  z-index:99;
+  margin:0 auto;
+  padding-top: .5vh;
+  visibility: hidden;
+}
+
 .sudoku {
   border-radius: 0;
   background-color: white;
