@@ -1,19 +1,20 @@
-let inputs = ["regBorderColor", "emphBorderColor", "squareSelectColor", "colRowSelectColor", "regTextColor", "mistakeTextColor", "regBackgroundColor", "hintBackgroundColor", "buttonTextColor", "disableButtonColor", "selectButtonColor", "hoverButtonColor", "screenBackgroundColor", "popupConfirm"];
+let inputs = ["regBorderColor", "emphBorderColor", "squareSelectColor", "colRowSelectColor", "regTextColor", "mistakeTextColor", "regBackgroundColor", "hintBackgroundColor", "buttonTextColor", "disableButtonColor", "selectButtonColor", "hoverButtonColor", "screenBackgroundColor", "popupConfirm", "particleTrail"];
 
-let defaultValues = ["#D3D3D3", "#000000","#7CB9E8","#ADD8E6", "#000000", "#ff0000",  "#FFFFFF", "#808080", "#000000","#808080", "#A9A9A9", "#d3d3d3", "#000000", "true"];
+let defaultValues = ["#D3D3D3", "#000000","#7CB9E8","#ADD8E6", "#000000", "#ff0000",  "#FFFFFF", "#808080", "#000000","#808080", "#A9A9A9", "#d3d3d3", "#000000", "true", "true"];
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
+var part = localStorage.getItem("particleTrail");
 
 const dots = [];
 const speed = 2;
 const maxNunmberOfParticles = 30;
 const numParticlesSpawn = 5;
-const maxRadius = 5;
-const minRadius = 1;
+const maxRadius = 7;
+const minRadius = 2;
 const opaciity = 0.6;
 const sha = 0; 
-
+const title = document.getElementById("startTitle");
 
 window.onresize = function () {
   ctx.canvas.width = window.innerWidth;
@@ -52,7 +53,16 @@ function dotMove(){
     ctx.globalAlpha = opaciity;
     ctx.shadowColor = dots[i].color;
     ctx.shadowBlur = sha;
-    ctx.arc(dots[i].x, dots[i].y, dots[i].radius, 0, 2*Math.PI);
+    if (dots[i].shape==0){
+      ctx.arc(dots[i].x, dots[i].y, dots[i].radius, 0, 2*Math.PI);
+    } else if (dots[i].shape==1){
+      ctx.fillRect(dots[i].x, dots[i].y, dots[i].radius*2, dots[i].radius*2);
+    } else if (dots[i].shape==2){
+      ctx.lineTo(dots[i].x, dots[i].y-dots[i].radius);
+      ctx.lineTo(dots[i].x-dots[i].radius, dots[i].y+dots[i].radius);
+      ctx.lineTo(dots[i].x+dots[i].radius, dots[i].y+dots[i].radius);
+      ctx.lineTo(dots[i].x, dots[i].y-dots[i].radius);
+    }
     ctx.fill();
     ctx.closePath();
   }
@@ -66,7 +76,12 @@ class Dot{
     this.yVel = Math.random() * 2 - 1;
     this.color = "hsl("+Math.random() * 360+",65%,65%)";
     this.radius = getRandomArbitrary(minRadius, maxRadius);
+    this.shape = getRandomInt(3);
   }
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
 
 function getRandomArbitrary(min, max) {
@@ -76,8 +91,10 @@ function getRandomArbitrary(min, max) {
 document.addEventListener("DOMContentLoaded", function(event){
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
-  loopingFunction();
-  setInterval(loopingFunction, 16.67);
+  if (part==null||part=="true"){
+    loopingFunction();
+    setInterval(loopingFunction, 16.67);
+  }
   for(let i=0; i<inputs.length; i++){
     if (localStorage.getItem(inputs[i])==null){
       localStorage.setItem(inputs[i], defaultValues[i]);
