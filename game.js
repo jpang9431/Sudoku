@@ -687,7 +687,7 @@ function solveMode(hasSolution = false) {
       mode = "entry";
       return;
     } else {
-      printBoard(solutions[0]);
+      //printBoard(solutions[0]);
       boardSize = 9;
       for (let row = 0; row < boardSize; row++) {
         for (let col = 0; col < boardSize; col++) {
@@ -710,7 +710,6 @@ function solveMode(hasSolution = false) {
       document.getElementById("undo").disabled = true;
       solvedNumberBoard = solutions[0];
     }
-
   }
 }
 
@@ -986,9 +985,14 @@ function clickSquare(row, col, place = false, remove = false, newAction = true) 
     buttonBoard[row][col].innerHTML = lastNum;
     numberBoard[row][col] = lastNum;
     checkErrors();
+    if (getEmptySquares().length==0&&errors.length==0){
+      console.log("solved");
+    }
   } else if (remove && !buttonBoard[row][col].hint) {
-    if (newAction) {
-      addToStack(undoStack, new Action(row, col, numberBoard[row][col], 0));
+    if (numberBoard[row][col]!=0){
+      if (newAction) {
+        addToStack(undoStack, new Action(row, col, numberBoard[row][col], 0));
+      }
     }
     buttonBoard[row][col].innerHTML = "";
     numberBoard[row][col] = 0;
