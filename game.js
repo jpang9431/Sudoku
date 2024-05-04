@@ -509,6 +509,17 @@ document.addEventListener("keydown", function(event) {
   }
 });
 
+//Call to hide all note numbers in a square
+function hideNotes(row,col){
+  for (let i=0; i<boardSize; i++){
+    document.getElementById(""+row+col+i).style.visibility = "hidden";
+  }
+}
+
+function showNotes(row,col){
+  
+}
+
 //Call to build board on screen
 //Returns nothing
 function visualBoard() {
@@ -519,19 +530,20 @@ function visualBoard() {
       let buttonX = screenHeight / boardSize * col;
       let buttonY = screenHeight / boardSize * row;
       let counter = 0;
-      /*for (let textRow = 0; textRow<Math.sqrt(boardSize); textRow++){
+      for (let textRow = 0; textRow<Math.sqrt(boardSize); textRow++){
         for(let textCol=0; textCol<Math.sqrt(boardSize); textCol++){
           counter++;
           let noteTextSize = screenHeight/boardSize;
           noteTextSize = noteTextSize/3;
           let tempElm = createElm("p", ""+row+col+counter, noteTextSize, noteTextSize, buttonX+noteTextSize*textCol, buttonY+noteTextSize*textRow, "sudokuText",counter);
           tempElm.style.color = regTextColor;
-          tempElm.addEventListener(function(event){
+          tempElm.addEventListener("click", function(event){
             let sourceId = event.target.id;
-            let squareRowCol = 
+            let squareRowCol = sourceId.substring(0,2);
+            document.getElementById("square"+squareRowCol).click();
           });
         }
-      }*/
+      }
       button.addEventListener("click", function(event) {
         let row = this.row;
         let col = this.col;

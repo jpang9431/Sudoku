@@ -23,6 +23,7 @@ h3 {
   margin:0 auto;
   padding-top: .5vh;
   visibility: hidden;
+  user-select: none;
 }
 
 .sudoku {
