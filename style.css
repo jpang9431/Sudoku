@@ -6,10 +6,30 @@ body {
   overflow: hidden;
   background-color: black;
   color: white;
+  filter: grayscale(80%), blur(5px);
 }
 
 h3 {
   text-align: center;
+}
+
+.blur{
+  position:absolute;
+  left:0;
+  top:0;
+  filter: grayscale(80%), blur(5px);
+  width:100%;
+  height:100%;
+  background-color: rgba(0, 0, 0, 0.61);
+  visibility: hidden;
+  z-index: 1;
+}
+
+#firework{
+  height:100%;
+  width:100%;
+  margin: 0;
+  overflow: hidden;
 }
 
 .sudokuText{
@@ -19,7 +39,7 @@ h3 {
   position: absolute;
   left:0px;
   top:0px;
-  z-index:99;
+  z-index:1;
   margin:0 auto;
   padding-top: .5vh;
   visibility: hidden;
@@ -174,7 +194,7 @@ h3 {
   width: 11vh;
   height: 11vh;
   background: conic-gradient(red, orange, yellow, lime, blue, violet, red);
-  z-index: 99;
+  z-index: 1;
   border-radius: 50%;
   animation-name: spin;
   animation-duration: 3s;
@@ -188,7 +208,7 @@ h3 {
   width: 8vh;
   height: 8vh;
   background-color: black;
-  z-index: 100;
+  z-index: 2;
   border-radius: 50%;
 }
 
