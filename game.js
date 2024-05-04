@@ -519,7 +519,7 @@ function visualBoard() {
       let buttonX = screenHeight / boardSize * col;
       let buttonY = screenHeight / boardSize * row;
       let counter = 0;
-      for (let textRow = 0; textRow<Math.sqrt(boardSize); textRow++){
+      /*for (let textRow = 0; textRow<Math.sqrt(boardSize); textRow++){
         for(let textCol=0; textCol<Math.sqrt(boardSize); textCol++){
           counter++;
           let noteTextSize = screenHeight/boardSize;
@@ -531,7 +531,7 @@ function visualBoard() {
             let squareRowCol = 
           });
         }
-      }
+      }*/
       button.addEventListener("click", function(event) {
         let row = this.row;
         let col = this.col;
