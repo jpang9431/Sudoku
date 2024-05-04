@@ -61,25 +61,13 @@ var mode = "entry";
 //Track wether or not in hint mode
 var hint = false;
 
-//Tracks which notes are on
-var noteMap = new Map();
-
-
+//Tracks wether or not in note mode
+var note = false;
 
 //Set border style
 const borderStyle = "solid ";
 
 const doPopUp = localStorage.getItem("popupConfirm") == "true";
-
-
-function getNoteMap(){
-  let map = new Map();
-  for(let i=0; i<boardSize; i++){
-    for(let j=0; j<boardSize; j++){
-      map.set(""+i+j,new Array(boardSize));
-    }
-  }
-}
 
 //Pass in element to have colors set (only use for non sudoku buttons)
 //Returns nothing
@@ -110,7 +98,7 @@ function centerElmInElm(elm1, elm2) {
 
 //Main function, call to start
 //Returns nothing
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function (event) {
   document.body.style.background = screenBackgroundColor;
   visualBoard();
   createOtherButtons();
@@ -119,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   tempElm.style.top = "0px";
   centerElmInElm(document.getElementById("outerLoading"), document.getElementById("innerLoading"));
   document.getElementById("innerLoading").style.backgroundColor = localStorage.getItem("screenBackgroundColor");
-  
+
   //console.log(document.getElementById("000"));
   entryMode();
   document.getElementById("redo").style.backgroundColor = disableButtonColor;
@@ -132,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   for (let i = 0; i < listOfHoverActionIds.length; i++) {
     //If mouse hover over valid hover element change to hover color
     //Returns nothing
-    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseenter", function(event) {
+    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseenter", function (event) {
       let source = event.target;
       if (!source.select && !source.disabled) {
         source.style.backgroundColor = hoverButtonColor;
@@ -141,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     });
     //If moust leave hovered element changed to regualr background color
     //Returns nothing
-    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseleave", function(event) {
+    document.getElementById(listOfHoverActionIds[i]).addEventListener("mouseleave", function (event) {
       let source = event.target;
       if (source.hover && !source.disabled && !source.select) {
         source.style.backgroundColor = regBackgroundColor;
@@ -272,12 +260,13 @@ function createOtherButtons() {
       setElmProperties(elm);
       //If click a number button siwtch last number selected and add number to current square
       //Returns nothing
-      elm.addEventListener("click", function(event) {
+      elm.addEventListener("click", function (event) {
         document.getElementById("" + lastNum).style.backgroundColor = regBackgroundColor;
         document.getElementById("" + lastNum).select = false;
         let elm = event.target || event.srcElement;
         lastNum = parseInt(elm.id);
         elm.select = true;
+        hideNotes(userRow, userCol);
         clickSquare(userRow, userCol, true);
       });
     }
@@ -285,29 +274,32 @@ function createOtherButtons() {
 
   //Removes number from current square same as backspace action
   //Returns nothing
-  createElm("button", "delte", buttonWidth * 3, buttonHeight, numberSpacing + boardSize, buttonHeight * 3, "otherButtons", "X").addEventListener("click", function(event) {
+  createElm("button", "delte", buttonWidth * 3, buttonHeight, numberSpacing + boardSize, buttonHeight * 3, "otherButtons", "X").addEventListener("click", function (event) {
+    showNotes(userRow, userCol);
     clickSquare(userRow, userCol, false, true);
     let elm = event.target || event.srcElement;
     elm.style.background = regBackgroundColor;
   });
   setElmProperties(document.getElementById("delte"));
-  createElm("button", "regMode", buttonWidth*3/2, buttonHeight, numberSpacing + boardSize, buttonHeight * 3+buttonHeight, "otherButtons", "Edit").addEventListener("click", function(event){
-    hint = false;
+  createElm("button", "regMode", buttonWidth * 3 / 2, buttonHeight, numberSpacing + boardSize, buttonHeight * 3 + buttonHeight, "otherButtons", "Edit").addEventListener("click", function (event) {
+    note = false;
     document.getElementById("regMode").disabled = true;
     document.getElementById("regMode").style.backgroundColor = disableButtonColor;
     document.getElementById("noteMode").disabled = false;
     document.getElementById("noteMode").style.backgroundColor = regBackgroundColor;
   });
-  createElm("button", "noteMode", buttonWidth*3/2, buttonHeight, numberSpacing + boardSize + buttonWidth*3/2, buttonHeight * 3+buttonHeight, "otherButtons", "Note").addEventListener("click", function(event){
-    hint = true;
-    document.getElementById("regMode").disabled = false;
-    document.getElementById("regMode").style.backgroundColor = regBackgroundColor;
-    document.getElementById("noteMode").disabled = true;
-    document.getElementById("noteMode").style.backgroundColor = disableButtonColor;
+  createElm("button", "noteMode", buttonWidth * 3 / 2, buttonHeight, numberSpacing + boardSize + buttonWidth * 3 / 2, buttonHeight * 3 + buttonHeight, "otherButtons", "Note").addEventListener("click", function (event) {
+    if (mode != "entry") {
+      note = true;
+      document.getElementById("regMode").disabled = false;
+      document.getElementById("regMode").style.backgroundColor = regBackgroundColor;
+      document.getElementById("noteMode").disabled = true;
+      document.getElementById("noteMode").style.backgroundColor = disableButtonColor;
+    }
   });
 
-  
-  
+
+
   let counter = 0;
   let secondGroupHeight = buttonHeight * 5.5;
   //Undo Button
@@ -322,7 +314,7 @@ function createOtherButtons() {
 
   //Click to show conformation dialog
   //Returns nothing
-  createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate").addEventListener("click", function(event) {
+  createElm("button", "generate", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, secondGroupHeight, "otherButtons", "Generate").addEventListener("click", function (event) {
     showDialog('generatePuzzleDialog');
   });
 
@@ -334,7 +326,7 @@ function createOtherButtons() {
   //Click to switch to entry mode and rest the board
   //Retuns nothin
   createElm("button", "entryMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Entry\nMode"
-  ).addEventListener("click", function(event) {
+  ).addEventListener("click", function (event) {
     entryMode();
     resetBoard();
   });
@@ -343,14 +335,14 @@ function createOtherButtons() {
   //Click to download a txt save file
   //Returns nothing
   createElm("button", "open", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Open"
-  ).addEventListener("click", function(event) {
+  ).addEventListener("click", function (event) {
     document.getElementById("saveFile").click();
   });
   setElmProperties(document.getElementById("open"));
 
   //Click to upload a save file and set the specific data on thes creen based on file
   //Returns nothing
-  document.getElementById("saveFile").addEventListener("change", function(event) {
+  document.getElementById("saveFile").addEventListener("change", function (event) {
     const selectedFile = document.getElementById("saveFile").files[0];
     const reader = new FileReader();
     resetBoard();
@@ -393,7 +385,7 @@ function createOtherButtons() {
   //Click to download a save file with the data
   //Returns nothing
   createElm("button", "save", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, thirdGroupHeight, "otherButtons", "Save"
-  ).addEventListener("click", function(event) {
+  ).addEventListener("click", function (event) {
     let boardData = "";
     let hintData = "";
     let solvedBoardData = "";
@@ -425,7 +417,7 @@ function createOtherButtons() {
     tempElm.click();
     //Trigger to remove the dowload link
     //Returns nothing
-    setTimeout(function() {
+    setTimeout(function () {
       document.body.removeChild(tempElm);
       window.URL.revokeObjectURL(url);
     }, 0);
@@ -437,7 +429,7 @@ function createOtherButtons() {
   //Click to switch to solve mode and generate solutionto  use inputted data
   //Retunrs nothing
   createElm("button", "solveMode", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve\nMode"
-  ).addEventListener("click", function(event) {
+  ).addEventListener("click", function (event) {
     //resetBoard();
     solveMode(false);
   });
@@ -446,7 +438,7 @@ function createOtherButtons() {
   //Click to show conformation for hint
   //Returns nothing
   createElm("button", "hint", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Hint"
-  ).addEventListener("click", function(event) {
+  ).addEventListener("click", function (event) {
     if (doPopUp) {
       showDialog('confirmActionDialog2');
     } else {
@@ -458,7 +450,7 @@ function createOtherButtons() {
   //CLick to show the confromation idalong on wether on not to get solution
   //What do you know, returns nothing
   createElm("button", "solve", buttonWidth, buttonHeight, (++counter) * spacing + buttonWidth * (counter - 1) + boardSize, fourthGroupHeight, "otherButtons", "Solve"
-  ).addEventListener("click", function(event) {
+  ).addEventListener("click", function (event) {
     document.getElementById('confirmDialogTitle').textContent = "Confirm Solve";
     document.getElementById('confirmDialogMessage').textContent = "Are you sure you want to solve the puzzle now?";
     if (doPopUp) {
@@ -477,7 +469,7 @@ function createOtherButtons() {
 
 //Triggers when user inputs a number or uses keyboard input user interact with board
 //Returnst nothing
-document.addEventListener("keydown", function(event) {
+document.addEventListener("keydown", function (event) {
   let key = event.key;
   if (key == "ArrowUp" || key == "w") {
     clickSquare(userRow - 1, userCol);
@@ -488,36 +480,59 @@ document.addEventListener("keydown", function(event) {
   } else if (key == "ArrowRight" || key == "d") {
     clickSquare(userRow, userCol + 1);
   } else if (key == "Backspace") {
+    showNotes(userRow, userCol);
     clickSquare(userRow, userCol, false, true);
   } else if (key == "z" && event.ctrlKey) {
     undo();
   } else if (key == "y" && event.ctrlKey) {
     redo();
-  } else if (key=="Shift"){
-    if (hint){
+  } else if (key == "Shift") {
+    if (note) {
       document.getElementById("regMode").click();
-    } else if (!hint){
+    } else if (!note && mode != "entry") {
       document.getElementById("noteMode").click();
     }
   } else {
     let num = parseInt(key);
     if (num != NaN && num > 0) {
-      document.getElementById(lastNum).style.backgroundColor = "white";
-      lastNum = num;
-      clickSquare(userRow, userCol, true);
+      if(note){
+        flipNoteStatus(userRow, userCol, num);
+      } else {
+        document.getElementById(lastNum).style.backgroundColor = "white";
+        lastNum = num;
+        hideNotes(userRow, userCol);
+        clickSquare(userRow, userCol, true);
+      }
+      
     }
   }
 });
 
 //Call to hide all note numbers in a square
-function hideNotes(row,col){
-  for (let i=0; i<boardSize; i++){
-    document.getElementById(""+row+col+i).style.visibility = "hidden";
+function hideNotes(row, col) {
+  for (let i = 0; i < boardSize; i++) {
+    let num = i+1;
+    document.getElementById("" + row + col + num).style.visibility = "hidden";
   }
 }
 
-function showNotes(row,col){
-  
+function showNotes(row, col) {
+  for (let i = 0; i < boardSize; i++) {
+    let num = i+1;
+    if (document.getElementById("" + row + col + num).isNoted) {
+      document.getElementById("" + row + col + num).style.visibility = "visible";
+    }
+  }
+}
+
+function flipNoteStatus(row, col, number) {
+  let elm = document.getElementById("" + row + col + number);
+  elm.isNoted = !elm.isNoted;
+  if (elm.isNoted) {
+    elm.style.visibility = "visible"
+  } else {
+    elm.style.visibility = "hidden";
+  }
 }
 
 //Call to build board on screen
@@ -530,21 +545,22 @@ function visualBoard() {
       let buttonX = screenHeight / boardSize * col;
       let buttonY = screenHeight / boardSize * row;
       let counter = 0;
-      for (let textRow = 0; textRow<Math.sqrt(boardSize); textRow++){
-        for(let textCol=0; textCol<Math.sqrt(boardSize); textCol++){
+      for (let textRow = 0; textRow < Math.sqrt(boardSize); textRow++) {
+        for (let textCol = 0; textCol < Math.sqrt(boardSize); textCol++) {
           counter++;
-          let noteTextSize = screenHeight/boardSize;
-          noteTextSize = noteTextSize/3;
-          let tempElm = createElm("p", ""+row+col+counter, noteTextSize, noteTextSize, buttonX+noteTextSize*textCol, buttonY+noteTextSize*textRow, "sudokuText",counter);
+          let noteTextSize = screenHeight / boardSize;
+          noteTextSize = noteTextSize / 3;
+          let tempElm = createElm("p", "" + row + col + counter, noteTextSize, noteTextSize, buttonX + noteTextSize * textCol, buttonY + noteTextSize * textRow, "sudokuText", counter);
           tempElm.style.color = regTextColor;
-          tempElm.addEventListener("click", function(event){
+          tempElm.isNoted = false;
+          tempElm.addEventListener("click", function (event) {
             let sourceId = event.target.id;
-            let squareRowCol = sourceId.substring(0,2);
-            document.getElementById("square"+squareRowCol).click();
+            let squareRowCol = sourceId.substring(0, 2);
+            document.getElementById("square" + squareRowCol).click();
           });
         }
       }
-      button.addEventListener("click", function(event) {
+      button.addEventListener("click", function (event) {
         let row = this.row;
         let col = this.col;
         clickSquare(row, col, false, false);
