@@ -40,6 +40,10 @@ p {
     font-size: 5vh;
     font-family: Monospace;
 }
+#backButton:hover {
+    background-color: #6d7e8c;
+    transition: 0.5;
+}
 /*#first {
   top:20%;
 }

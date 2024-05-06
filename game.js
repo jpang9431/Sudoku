@@ -83,6 +83,16 @@ var hint = false;
 //Tracks wether or not in note mode
 var note = false;
 
+//Tracks some stats
+var numHintsUsed = 0;
+var usedSolve = false;
+var numUndo = 0;
+var numRedo = 0;
+var numMistakes = 0;
+var time = 0;
+var numIntitalHints = 0;
+var manualEntry = false;
+
 //Set border style
 const borderStyle = "solid ";
 
@@ -270,6 +280,14 @@ function resetBoard() {
   document.getElementById("redo").disabled = true;
   document.getElementById("undo").style.backgroundColor = disableButtonColor;
   document.getElementById("undo").disabled = true;
+  numHintsUsed = 0;
+  usedSolve = false;
+  numUndo = 0;
+  numRedo = 0;
+  numMistakes = 0;
+  time = 0;
+  numIntitalHints = 0;
+  manualEntry = false;
 }
 
 //Call when bulding screen
@@ -852,6 +870,7 @@ function solveMode(hasSolution = false) {
       //entryMode();
       return;
     }
+    manualEntry = true;
     let solutions = solveBoard(
       0,
       getEmptySquareObjects(),
@@ -875,7 +894,7 @@ function solveMode(hasSolution = false) {
       mode = "entry";
       return;
     } else {
-      printBoard(solutions[0]);
+      //printBoard(solutions[0]);
       boardSize = 9;
       for (let row = 0; row < boardSize; row++) {
         for (let col = 0; col < boardSize; col++) {
@@ -962,6 +981,7 @@ function addHint(row, col, value) {
   buttonBoard[row][col].innerHTML = value;
   buttonBoard[row][col].hint = true;
   buttonBoard[row][col].style.backgroundColor = hintBackgroundColor;
+  numHintsUsed++;
 }
 
 //Call to remove an element from an array
@@ -1290,10 +1310,16 @@ function addToStack(stack, action) {
   if (undoStack.length >= 1) {
     document.getElementById("undo").style.backgroundColor = regBackgroundColor;
     document.getElementById("undo").disabled = false;
+  } else {
+    document.getElementById("undo").style.backgroundColor = disableButtonColor;
+    document.getElementById("undo").disabled = true;
   }
   if (redoStack.length >= 1) {
     document.getElementById("redo").style.backgroundColor = regBackgroundColor;
     document.getElementById("redo").disabled = false;
+  } else {
+    document.getElementById("redo").style.backgroundColor = disableButtonColor;
+    document.getElementById("redo").disabled = true;
   }
 }
 
@@ -1301,6 +1327,7 @@ function addToStack(stack, action) {
 //Returns ntohing
 function undo() {
   if (undoStack.length > 0) {
+    numUndo++;
     const action = undoStack.pop();
     if (action.orgNum == 0) {
       clickSquare(action.row, action.col, false, true, false);
@@ -1322,6 +1349,7 @@ function undo() {
 //Returns nothing
 function redo() {
   if (redoStack.length > 0) {
+    numRedo++;
     const action = redoStack.pop();
     if (action.newNum == 0) {
       clickSquare(action.row, action.col, false, true, false);
