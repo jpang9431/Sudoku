@@ -131,16 +131,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
   document.body.style.background = screenBackgroundColor;
   visualBoard();
   createOtherButtons();
-  let tempElm = document.getElementById("outerLoading");
-  tempElm.style.left = screenWidth - tempElm.offsetWidth + "px";
-  tempElm.style.top = "0px";
-  centerElmInElm(
-    document.getElementById("outerLoading"),
-    document.getElementById("innerLoading"),
-  );
-  document.getElementById("innerLoading").style.backgroundColor =
-    localStorage.getItem("screenBackgroundColor");
-  //console.log(document.getElementById("000"));
   entryMode();
   document.getElementById("redo").style.backgroundColor = disableButtonColor;
   document.getElementById("redo").disabled = true;
@@ -489,6 +479,7 @@ function createOtherButtons() {
         }
         let mode = text[text.length - 1][0];
         if (mode == "solve") {
+          manualEntry = true;
           solveMode();
         } else {
           entryMode();
@@ -623,12 +614,15 @@ function createOtherButtons() {
     if (doPopUp) {
       showDialog("confirmActionDialog");
     } else {
+      usedSolve = true;
       boardSize = 9;
       for (let row = 0; row < boardSize; row++) {
         for (let col = 0; col < boardSize; col++) {
           addHint(row, col, solvedNumberBoard[row][col]);
         }
       }
+      errors = [];
+      solvedNotif();
     }
   });
   setElmProperties(document.getElementById("solve"));
@@ -659,6 +653,9 @@ document.addEventListener("keydown", function (event) {
     } else if (!note && mode != "entry") {
       document.getElementById("noteMode").click();
     }
+  } else if (key == "Escape"){
+    document.getElementById("save").click();
+    document.getElementById("settingsThing").click();
   } else {
     let num = parseInt(key);
     if (num != NaN && num > 0) {
@@ -920,6 +917,8 @@ function solveMode(hasSolution = false) {
       solvedNumberBoard = solutions[0];
     }
   }
+  numIntitalHints = 81 - getEmptySquares().length;
+  time = Date.now();
 }
 
 //Call to set elements into entry mode
@@ -981,6 +980,7 @@ function addHint(row, col, value) {
   buttonBoard[row][col].innerHTML = value;
   buttonBoard[row][col].hint = true;
   buttonBoard[row][col].style.backgroundColor = hintBackgroundColor;
+  buttonBoard[row][col].style.color = regTextColor;
   numHintsUsed++;
 }
 
@@ -1208,7 +1208,6 @@ function clickSquare(
     buttonBoard[row][i].style.backgroundColor = colRowSelectColor;
     buttonBoard[i][col].style.backgroundColor = colRowSelectColor;
   }
-
   buttonBoard[row][col].style.backgroundColor = squareSelectColor;
   if (place && !buttonBoard[row][col].hint) {
     if (newAction) {
@@ -1218,47 +1217,13 @@ function clickSquare(
       );
     }
     numberBoard[row][col] = 0;
-    errorCheck(row, col, lastNum);
+    if (errorCheck(row, col, lastNum)) {
+      numMistakes++;
+    }
     buttonBoard[row][col].innerHTML = lastNum;
     numberBoard[row][col] = lastNum;
     checkErrors();
-    let elms = document.body.getElementsByTagName("*");
-    
-    if (getEmptySquares().length == 0 && errors.length == 0) {
-      for(let i=0; i<elms.length; i++){
-        elms[i].style.filter = "blur(10px)";
-      }
-      var duration = 15 * 500;
-      var animationEnd = Date.now() + duration;
-      var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-      var interval = setInterval(function () {
-        var timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) {
-          for(let i=0; i<elms.length; i++){
-            elms[i].style.filter = "blur(0px)";
-          }
-          return clearInterval(interval);
-        }
-
-        var particleCount = 100 * (timeLeft / duration);
-        // since particles fall down, start a bit higher than random
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-        });
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.3, 0.7), y: Math.random() - 0.2 },
-        });
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-        });
-      }, 250);
-    }
+    solvedNotif();
   } else if (remove && !buttonBoard[row][col].hint) {
     if (newAction && numberBoard[row][col] != 0) {
       addToStack(undoStack, new Action(row, col, numberBoard[row][col], 0));
@@ -1377,13 +1342,17 @@ function showDialog(dialogId) {
 //Returns nothing
 function closeConfirmDialog(result) {
   document.getElementById("confirmActionDialog").close();
+  usedSolve = true;
   if (result) {
+    usedSolve = true;
     boardSize = 9;
     for (let row = 0; row < boardSize; row++) {
       for (let col = 0; col < boardSize; col++) {
         addHint(row, col, solvedNumberBoard[row][col]);
       }
     }
+    errors = [];
+    solvedNotif();
   }
 }
 
@@ -1484,4 +1453,79 @@ function startPuzzleGeneration() {
       solvedNumberBoard[squares[i][0]][squares[i][1]],
     );
   }
+}
+
+function solvedNotif() {
+  if (getEmptySquares().length == 0 && errors.length == 0) {
+    let elms = document.body.getElementsByTagName("*");
+    for (let i = 0; i < elms.length; i++) {
+      if (elms[i].id!="outerLoading"&&elms[i].id!="innerLoading"){
+        elms[i].style.filter = "blur(10px)";
+      }
+      
+    }
+    time = Math.floor((Date.now() - time) / 1000);
+    showDialog("resultsDialog");
+    document.getElementById("intitalHinits").innerHTML =
+      "Inital Hints: " + numIntitalHints;
+    document.getElementById("mistakesMade").innerHTML =
+      "Mistaks Made: " + numMistakes;
+    document.getElementById("hintsStat").innerHTML =
+      "Hints Used: " + numHintsUsed;
+    document.getElementById("timeAmount").innerHTML = "Time taken: " + time + " seconds";
+    document.getElementById("undoPressed").innerHTML =
+      "Undo Pressed: " + numUndo;
+    document.getElementById("redoPressed").innerHTML =
+      "Redo Pressed: " + numRedo;
+    document.getElementById("solvePressed").innerHTML = "Gave Up: " + usedSolve;
+    document.getElementById("userEntry").innerHTML =
+      "Manual Entry: " + manualEntry;
+    document.getElementById("resultsDialog").style.filter = "blur(0px)";
+    let tempElms = document.getElementById("resultsDialog").children;
+    for (let i = 0; i < tempElms.length; i++) {
+      tempElms[i].style.filter = "blur(0px)";
+      let children = tempElms[i].children;
+      for(let i=0; i<children.length; i++){
+        children[i].style.filter = "blur(0px)";
+      }
+    }
+    
+    var duration = 15 * 500;
+    var animationEnd = Date.now() + duration;
+    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    var interval = setInterval(function () {
+      var timeLeft = animationEnd - Date.now();
+      if (timeLeft <= 0) {
+        for (let i = 0; i < elms.length; i++) {
+          if (elms[i].id!="outerLoading"&&elms[i].id!="innerLoading"){
+            elms[i].style.filter = "blur(0px)";
+          } else {
+            console.log(elms[i]);
+          }
+        }
+        return clearInterval(interval);
+      }
+
+      var particleCount = 100 * (timeLeft / duration);
+      // since particles fall down, start a bit higher than random
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.3, 0.7), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+  }
+}
+function closeDialogStats() {
+  document.getElementById("resultsDialog").close();
 }

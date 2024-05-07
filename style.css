@@ -221,3 +221,19 @@ h3 {
     transform: rotate(360deg);
   }
 }
+
+table{
+  width:fit-content;
+  height:fit-content
+}
+
+tbody td {
+  text-align: left;
+}
+
+tbody th {
+  text-align: left;
+  height:fit-content;
+  width:fit-content;
+  padding-right: 5vw;
+}
