@@ -981,6 +981,7 @@ function addHint(row, col, value) {
   buttonBoard[row][col].hint = true;
   buttonBoard[row][col].style.backgroundColor = hintBackgroundColor;
   buttonBoard[row][col].style.color = regTextColor;
+  hideNotes(row,col);
   numHintsUsed++;
 }
 
