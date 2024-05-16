@@ -653,7 +653,7 @@ document.addEventListener("keydown", function (event) {
     } else if (!note && mode != "entry") {
       document.getElementById("noteMode").click();
     }
-  } else if (key == "Escape"){
+  } else if (key == "Escape") {
     document.getElementById("save").click();
     document.getElementById("settingsThing").click();
   } else {
@@ -1459,10 +1459,9 @@ function solvedNotif() {
   if (getEmptySquares().length == 0 && errors.length == 0) {
     let elms = document.body.getElementsByTagName("*");
     for (let i = 0; i < elms.length; i++) {
-      if (elms[i].id!="outerLoading"&&elms[i].id!="innerLoading"){
+      if (elms[i].id != "outerLoading" && elms[i].id != "innerLoading") {
         elms[i].style.filter = "blur(10px)";
       }
-      
     }
     time = Math.floor((Date.now() - time) / 1000);
     showDialog("resultsDialog");
@@ -1472,7 +1471,8 @@ function solvedNotif() {
       "Mistaks Made: " + numMistakes;
     document.getElementById("hintsStat").innerHTML =
       "Hints Used: " + numHintsUsed;
-    document.getElementById("timeAmount").innerHTML = "Time taken: " + time + " seconds";
+    document.getElementById("timeAmount").innerHTML =
+      "Time taken: " + time + " seconds";
     document.getElementById("undoPressed").innerHTML =
       "Undo Pressed: " + numUndo;
     document.getElementById("redoPressed").innerHTML =
@@ -1485,11 +1485,11 @@ function solvedNotif() {
     for (let i = 0; i < tempElms.length; i++) {
       tempElms[i].style.filter = "blur(0px)";
       let children = tempElms[i].children;
-      for(let i=0; i<children.length; i++){
+      for (let i = 0; i < children.length; i++) {
         children[i].style.filter = "blur(0px)";
       }
     }
-    
+
     var duration = 15 * 500;
     var animationEnd = Date.now() + duration;
     var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -1497,7 +1497,7 @@ function solvedNotif() {
       var timeLeft = animationEnd - Date.now();
       if (timeLeft <= 0) {
         for (let i = 0; i < elms.length; i++) {
-          if (elms[i].id!="outerLoading"&&elms[i].id!="innerLoading"){
+          if (elms[i].id != "outerLoading" && elms[i].id != "innerLoading") {
             elms[i].style.filter = "blur(0px)";
           } else {
             console.log(elms[i]);
